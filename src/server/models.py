@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
+from datetime import datetime
 
 metadata = MetaData(naming_convention={
     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
@@ -10,8 +11,10 @@ db = SQLAlchemy(metadata=metadata)
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String, nullable=False, unique=True)
     username = db.Column(db.String, nullable=False)
     password = db.Column(db.String, nullable=False)
+
     apologies = db.relationship("Apology", backref="user")
 
     def __repr__(self):
@@ -22,6 +25,8 @@ class Apology(db.Model):
     apology_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     text = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
     intended_for = db.relationship("IntendedFor", backref="apology")
     categories = db.relationship("ApologyCategory", backref="apology")
