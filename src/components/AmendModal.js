@@ -16,7 +16,7 @@ const AmendModal = ({ userId, currentUsername, currentEmail, show, handleClose }
         onSubmit={(values, { setSubmitting }) => {
             console.log(values);
             setSubmitting(true);
-            //issue with modal routes 
+            
             fetch(`http://localhost:5555/users/${userId}`, { 
               method: 'PATCH',
               headers: {
