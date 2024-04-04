@@ -1,8 +1,8 @@
-"""Initial migration.
+"""Initial Migration
 
-Revision ID: bcd6e1e3dc57
+Revision ID: 37ec45dc66ca
 Revises: 
-Create Date: 2024-04-01 12:16:08.181190
+Create Date: 2024-04-03 17:46:29.160084
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'bcd6e1e3dc57'
+revision = '37ec45dc66ca'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -27,15 +27,15 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('email', sa.String(), nullable=False),
     sa.Column('username', sa.String(), nullable=False),
-    sa.Column('password', sa.String(), nullable=False),
+    sa.Column('_password_hash', sa.String(length=128), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
     op.create_table('apologies',
     sa.Column('apology_id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('text', sa.Text(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('apology_text', sa.Text(), nullable=False),
+    sa.Column('apology_created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('fk_apologies_user_id_users')),
     sa.PrimaryKeyConstraint('apology_id')
@@ -49,8 +49,8 @@ def upgrade():
     )
     op.create_table('intended_for',
     sa.Column('intended_id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(), nullable=False),
-    sa.Column('location', sa.String(), nullable=False),
+    sa.Column('recipient', sa.String(), nullable=False),
+    sa.Column('event_location', sa.String(), nullable=False),
     sa.Column('event_date', sa.Date(), nullable=False),
     sa.Column('apology_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['apology_id'], ['apologies.apology_id'], name=op.f('fk_intended_for_apology_id_apologies')),
