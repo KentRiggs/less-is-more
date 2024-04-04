@@ -37,10 +37,10 @@ class User(db.Model, SerializerMixin):
 class Apology(db.Model, SerializerMixin):
     __tablename__ = 'apologies'
 
-    serialize_rules = ('-intended_for.apology', 'apology_id', 'text', 'created_at', '-user.apologies', '-apology_categories.apology')
+    serialize_rules = ('-intended_for.apology', 'apology_id', 'apology_text', 'apology_created_at', '-user.apologies', '-apology_categories.apology', '-categories')
 
     apology_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     apology_text = db.Column(db.Text, nullable=False)
     apology_created_at = db.Column(db.DateTime, default=datetime.now)
     updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)

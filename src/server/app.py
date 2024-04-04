@@ -1,4 +1,4 @@
-from models import User
+from models import User, Apology
 from flask import jsonify, make_response, request
 from flask_restful import Resource
 from config import app, db, api
@@ -50,20 +50,23 @@ class UserEdit(Resource):
 
 api.add_resource(UserEdit, '/users/<int:user_id>')
 
-# class Apologies(Resource):
+class Apologies(Resource):
+
+    def post(self):
+        data = request.get_json()
+        new_apology = Apology(apology_text=data['apology_text'])
+        db.session.add(new_apology)
+        db.session.commit()
+        return make_response(jsonify(new_apology.to_dict()), 201)
+
+api.add_resource(Apologies, '/apologies/')
+
 #     def get(self, apology_id):
 #         apology = Apology.query.get(apology_id)
 #         if apology is None:
 #             return make_response(jsonify(error="Apology not found"), 404)
         
 #         return make_response(jsonify(apology.to_dict()), 200)
-
-#     def post(self):
-#         data = request.get_json()
-#         new_apology = Apology(user_id=data['user_id'], text=data['text'])
-#         db.session.add(new_apology)
-#         db.session.commit()
-#         return make_response(jsonify(new_apology.to_dict()), 201)
 
 #     def put(self, apology_id):
 #         apology = Apology.query.get(apology_id)
@@ -86,7 +89,7 @@ api.add_resource(UserEdit, '/users/<int:user_id>')
 #         db.session.commit()
 #         return make_response('', 204)
 
-# api.add_resource(Apologies, '/apologies/<int:apology_id>')
+
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
