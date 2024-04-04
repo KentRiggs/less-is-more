@@ -2,56 +2,53 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 from datetime import datetime
 from sqlalchemy_serializer import SerializerMixin
-# from flask_bcrypt import Bcrypt
-
-metadata = MetaData(naming_convention={
-    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
-})
-
-db = SQLAlchemy(metadata=metadata)
+from sqlalchemy.ext.associationproxy import association_proxy
+from config import db, bcrypt
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
 
-    serialize_rules = ('-password', 'apologies', '-apologies.user')
+    serialize_rules = ('-password', 'id', 'username', '-apologies.user')
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String, nullable=False, unique=True)
     username = db.Column(db.String, nullable=False)
-    password = db.Column(db.String, nullable=False)
+    _password_hash = db.Column(db.String(128), nullable=False)
 
     apologies = db.relationship("Apology", backref="user")
 
-    # @property
-    # def password_hash(self):
-    #     return self._password_hash
-    
-    # @password_hash.setter
-    # def password_hash(self, password):
-    #     byte_object = password.encode('utf-8')
-    #     bcrypt_hash = bcrypt.generate_password_hash(byte_object)
-    #     hash_object_as_string = bcrypt_hash.decode('utf-8')
-    #     self._password_hash = hash_object_as_string
+    @property
+    def password(self):
+        raise AttributeError('password is not a readable attribute')
 
-    # def authenticate(self, password):
-    #     return bcrypt.check_password_hash(self.password_hash, password.encode('utf-8'))
+    @password.setter
+    def password(self, password):
+        self._password_hash = bcrypt.generate_password_hash(password.encode('utf-8')).decode('utf-8')
 
-    # def __repr__(self):
-    #     return f'<User id={self.id}, username={self.username}>'
+    def authenticate(self, password):
+        return bcrypt.check_password_hash(self._password_hash, password.encode('utf-8'))
+
+    def to_dict(self):
+        return {"id": self.id, "email": self.email, "username": self.username}
+
+    def __repr__(self):
+        return f'<User id={self.id}, username={self.username}>'
 
 class Apology(db.Model, SerializerMixin):
     __tablename__ = 'apologies'
 
-    serialize_rules = ('-user.password', 'intended_for', 'categories.category_name', '-categories.apology')
+    serialize_rules = ('-intended_for.apology', 'apology_id', 'text', 'created_at', '-user.apologies', '-apology_categories.apology')
 
     apology_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    text = db.Column(db.Text, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.now)
+    apology_text = db.Column(db.Text, nullable=False)
+    apology_created_at = db.Column(db.DateTime, default=datetime.now)
     updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
     intended_for = db.relationship("IntendedFor", backref="apology")
-    categories = db.relationship("ApologyCategory", backref="apology")
+    apology_categories = db.relationship("ApologyCategory", backref="apology")
+
+    categories = association_proxy('apology_categories', 'category')
 
     def __repr__(self):
         return f'<Apology apology_id={self.apology_id}>'
@@ -59,11 +56,11 @@ class Apology(db.Model, SerializerMixin):
 class IntendedFor(db.Model, SerializerMixin):
     __tablename__ = 'intended_for'
 
-    serialize_rules = ('-apology',)
+    serialize_rules = ('name', 'location', 'event_date', 'intended_id')
 
     intended_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    location = db.Column(db.String, nullable=False)
+    recipient = db.Column(db.String, nullable=False)
+    event_location = db.Column(db.String, nullable=False)
     event_date = db.Column(db.Date, nullable=False)
     
     apology_id = db.Column(db.Integer, db.ForeignKey('apologies.apology_id'), nullable=False)
@@ -74,7 +71,7 @@ class IntendedFor(db.Model, SerializerMixin):
 class Category(db.Model, SerializerMixin):
     __tablename__ = 'categories'
 
-    serialize_rules = ('-apology_categories',)
+    serialize_rules = ('category_id', 'category_name', '-apologies.categories')
 
     category_id = db.Column(db.Integer, primary_key=True)
     category_name = db.Column(db.String, nullable=False)
@@ -85,7 +82,7 @@ class Category(db.Model, SerializerMixin):
 class ApologyCategory(db.Model, SerializerMixin):
     __tablename__ = 'apology_categories'
 
-    serialize_rules = ('-apology', '-category')
-
     apology_id = db.Column(db.Integer, db.ForeignKey('apologies.apology_id'), primary_key=True)
     category_id = db.Column(db.Integer, db.ForeignKey('categories.category_id'), primary_key=True)
+
+    category = db.relationship("Category")

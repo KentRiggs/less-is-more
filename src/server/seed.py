@@ -14,11 +14,15 @@ def seed():
         Category.query.delete()
         db.session.commit()
 
+        print("Old data cleared.")
+
         # Seed Users
-        user1 = User(username="UserOne", password="Pass123")
-        user2 = User(username="UserTwo", password="Pass456")
+        user1 = User(email='example1@example.com', username="UserOne") 
+        user2 = User(email='example2@example.com', username="UserTwo") 
         db.session.add_all([user1, user2])
         db.session.commit()
+
+        print("Users seeded.")
 
         # Seed Categories
         category1 = Category(category_name="Personal")
@@ -26,17 +30,23 @@ def seed():
         db.session.add_all([category1, category2])
         db.session.commit()
 
+        print("Categories seeded.")
+
         # Seed Apologies
-        apology1 = Apology(user_id=user1.id, text="I'm sorry for the delay.")
-        apology2 = Apology(user_id=user2.id, text="I apologize for any inconvenience caused.")
+        apology1 = Apology(user_id=user1.id, apology_text="I'm sorry for the delay.", apology_created_at=datetime.now())
+        apology2 = Apology(user_id=user2.id, apology_text="I apologize for any inconvenience caused.", apology_created_at=datetime.now())
         db.session.add_all([apology1, apology2])
         db.session.commit()
 
+        print("Apologies seeded.")
+
         # Seed IntendedFor
-        intended1 = IntendedFor(name="Alice", location="Office", event_date=datetime.today(), apology_id=apology1.apology_id)
-        intended2 = IntendedFor(name="Bob", location="Headquarters", event_date=datetime.today(), apology_id=apology2.apology_id)
+        intended1 = IntendedFor(recipient="Alice", event_location="Office", event_date=datetime.now(), apology_id=apology1.apology_id)
+        intended2 = IntendedFor(recipient="Bob", event_location="Headquarters", event_date=datetime.now(), apology_id=apology2.apology_id)
         db.session.add_all([intended1, intended2])
         db.session.commit()
+
+        print("Intended recipients seeded.")
 
         # Seed ApologyCategories
         apologyCategory1 = ApologyCategory(apology_id=apology1.apology_id, category_id=category1.category_id)
@@ -44,8 +54,8 @@ def seed():
         db.session.add_all([apologyCategory1, apologyCategory2])
         db.session.commit()
 
+        print("Apology categories seeded.")
+
 if __name__ == '__main__':
     with app.app_context():
         seed()
-
-

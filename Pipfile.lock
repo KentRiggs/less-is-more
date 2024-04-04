@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "af125a76509212528166a5c66b6629e7b0d0e37112a5b3875235dc2b0d74bbae"
+            "sha256": "f3383c411e6394ff6549a372c6a492bbccfaba5f40cb61e4ea0374694d3a260e"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -89,6 +89,14 @@
             "index": "pypi",
             "markers": "python_version >= '3.8'",
             "version": "==3.0.2"
+        },
+        "flask-bcrypt": {
+            "hashes": [
+                "sha256:062fd991dc9118d05ac0583675507b9fe4670e44416c97e0e6819d03d01f808a",
+                "sha256:f07b66b811417ea64eb188ae6455b0b708a793d966e1a80ceec4a23bc42a4369"
+            ],
+            "index": "pypi",
+            "version": "==1.0.1"
         },
         "flask-cors": {
             "hashes": [
@@ -385,6 +393,15 @@
             ],
             "index": "pypi",
             "version": "==1.4.12"
+        },
+        "sqlalchemy-utils": {
+            "hashes": [
+                "sha256:85cf3842da2bf060760f955f8467b87983fb2e30f1764fd0e24a48307dc8ec6e",
+                "sha256:bc599c8c3b3319e53ce6c5c3c471120bd325d0071fb6f38a10e924e3d07b9990"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.7'",
+            "version": "==0.41.2"
         },
         "typing-extensions": {
             "hashes": [
