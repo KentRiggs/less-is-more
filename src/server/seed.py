@@ -17,8 +17,10 @@ def seed():
         print("Old data cleared.")
 
         # Seed Users
-        user1 = User(email='example1@example.com', username="UserOne") 
-        user2 = User(email='example2@example.com', username="UserTwo") 
+        user1 = User(email='example1@example.com', username="UserOne")
+        user1.password = 'securepassword123' 
+        user2 = User(email='example2@example.com', username="UserTwo")
+        user2.password = 'securepassword456'  
         db.session.add_all([user1, user2])
         db.session.commit()
 

@@ -1,5 +1,3 @@
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import MetaData
 from datetime import datetime
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
@@ -43,7 +41,6 @@ class Apology(db.Model, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     apology_text = db.Column(db.Text, nullable=False)
     apology_created_at = db.Column(db.DateTime, default=datetime.now)
-    updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
     intended_for = db.relationship("IntendedFor", backref="apology")
     apology_categories = db.relationship("ApologyCategory", backref="apology")
@@ -56,9 +53,9 @@ class Apology(db.Model, SerializerMixin):
 class IntendedFor(db.Model, SerializerMixin):
     __tablename__ = 'intended_for'
 
-    serialize_rules = ('name', 'location', 'event_date', 'intended_id')
+    serialize_rules = ('event_location', 'event_date', 'id', 'recipient')
 
-    intended_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     recipient = db.Column(db.String, nullable=False)
     event_location = db.Column(db.String, nullable=False)
     event_date = db.Column(db.Date, nullable=False)

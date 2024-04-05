@@ -1,8 +1,8 @@
-"""Initial Migration
+"""Initial migration
 
-Revision ID: 37ec45dc66ca
+Revision ID: f8c40cc419cb
 Revises: 
-Create Date: 2024-04-03 17:46:29.160084
+Create Date: 2024-04-05 16:25:38.547729
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '37ec45dc66ca'
+revision = 'f8c40cc419cb'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -33,10 +33,9 @@ def upgrade():
     )
     op.create_table('apologies',
     sa.Column('apology_id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('apology_text', sa.Text(), nullable=False),
     sa.Column('apology_created_at', sa.DateTime(), nullable=True),
-    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('fk_apologies_user_id_users')),
     sa.PrimaryKeyConstraint('apology_id')
     )
@@ -48,13 +47,13 @@ def upgrade():
     sa.PrimaryKeyConstraint('apology_id', 'category_id')
     )
     op.create_table('intended_for',
-    sa.Column('intended_id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('recipient', sa.String(), nullable=False),
     sa.Column('event_location', sa.String(), nullable=False),
     sa.Column('event_date', sa.Date(), nullable=False),
     sa.Column('apology_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['apology_id'], ['apologies.apology_id'], name=op.f('fk_intended_for_apology_id_apologies')),
-    sa.PrimaryKeyConstraint('intended_id')
+    sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
 
