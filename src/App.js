@@ -10,11 +10,10 @@ function App() {
 
   return (
     <div className="App">
-      {/* Conditional rendering of modals */}
+      
       {showEngage && <EngageModal handleClose={() => setShowEngage(false)} />}
       {showAmend && <AmendModal handleClose={() => setShowAmend(false)} />}
-      
-      {/* Passing control functions as context to Outlet */}
+    
       <Outlet context={{ setShowEngage, setShowAmend }} />
     </div>
   );

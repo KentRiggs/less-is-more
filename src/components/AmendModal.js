@@ -2,46 +2,47 @@ import React from 'react';
 import { Formik, Field, Form } from 'formik';
 import { Modal, Button, Form as BootstrapForm } from 'react-bootstrap';
 
-const AmendModal = ({ userId, currentUsername, currentEmail, show, handleClose }) => {
+const AmendModal = ({ handleClose, show }) => {
+  const initialValues = {
+    username: '',
+    email: '',
+  };
+
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
         <Modal.Title>Edit User</Modal.Title>
       </Modal.Header>
       <Formik
-        initialValues={{
-          username: currentUsername,
-          email: currentEmail,
-        }}
+        initialValues={initialValues}
         onSubmit={(values, { setSubmitting }) => {
-            console.log(values);
-            setSubmitting(true);
-            
-            fetch(`http://localhost:5555/users/${userId}`, { 
-              method: 'PATCH',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(values),
-            })
-            .then(response => {
-              setSubmitting(false);  
-              if (response.ok) {
-                return response.json();
-              } else {
-                throw new Error('Network response was not ok.');
-              }
-            })
-            .then(data => {
-              console.log(data);
-              handleClose();  
-            })
-            .catch(error => {
-              console.error('Error:', error);
-              setSubmitting(false);  
-            });
-          }}
+          console.log(values);
+          setSubmitting(true);
           
+          fetch(`http://localhost:5555/users/`, { 
+            method: 'PATCH', 
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(values),
+          })
+          .then(response => {
+            setSubmitting(false);  
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error('Network response was not ok.');
+            }
+          })
+          .then(data => {
+            console.log(data);
+            handleClose();  
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            setSubmitting(false);  
+          });
+        }}
       >
         {({ isSubmitting }) => (
           <Form>
@@ -72,3 +73,4 @@ const AmendModal = ({ userId, currentUsername, currentEmail, show, handleClose }
 };
 
 export default AmendModal;
+
