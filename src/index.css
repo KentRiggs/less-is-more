@@ -27,4 +27,18 @@ code {
     opacity: 0;
   }
 }
+.custom-container {
+  width: 100%; /* Ensures the container takes full width */
+}
+
+.custom-button {
+  font-weight: bold; /* Makes the text bolder */
+  border-radius: 10px; /* Rounded corners for buttons */
+  margin: 10px; /* Adds margin around buttons */
+  padding: 10px 20px; /* More padding for a bigger button */
+}
+
+.text-input {
+  text-align: center; /* Centers text in the input */
+}
 

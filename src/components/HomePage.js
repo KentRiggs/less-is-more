@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Button, Container, Form } from 'react-bootstrap';
-import { useOutletContext } from 'react-router-dom';
+import { Button, Container, Form, Row, Col } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom'; 
 
 const HomePage = () => {
   const [apologyText, setApologyText] = useState('');
-  const [submittedText, setSubmittedText] = useState(''); // New state for storing submitted text
+  const [submittedText, setSubmittedText] = useState(''); 
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const { setShowEngage, setShowAmend } = useOutletContext();
+  const navigate = useNavigate(); 
 
   const handleExperienceRelease = () => {
     fetch(`http://localhost:5555/apologies/`, {
@@ -19,8 +19,8 @@ const HomePage = () => {
     .then(response => {
       if (response.ok) {
         setIsSubmitted(true);
-        setSubmittedText(apologyText); // Update the submitted text for display
-        setApologyText(''); // Clear the input field
+        setSubmittedText(apologyText); 
+        setApologyText(''); 
         return response.json();
       } else {
         throw new Error('Failed to submit apology');
@@ -43,29 +43,37 @@ const HomePage = () => {
   }, [isSubmitted]);
 
   return (
-    <Container className="d-flex flex-column align-items-center justify-content-center" style={{ height: '100vh' }}>
+    <Container className="custom-container d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '100vh' }}>
       <h1 style={{ fontFamily: 'Courier New', textAlign: 'center' }}>What needs to be let go?</h1>
-      <Form.Group controlId="apologyText" className="mb-3 w-50">
-        <Form.Control
-          type="text"
-          placeholder="Enter an apology ..."
-          value={apologyText}
-          onChange={(e) => setApologyText(e.target.value)}
-          style={{ textAlign: 'center' }}
-        />
+      <Form.Group as={Row} controlId="apologyText" className="mb-3">
+        <Col sm={12}>
+          <Form.Control
+            type="text"
+            placeholder="Enter an apology ..."
+            value={apologyText}
+            onChange={(e) => setApologyText(e.target.value)}
+            className="text-input"
+          />
+        </Col>
       </Form.Group>
-      <div className="text-container">
+      <div className="text-container mb-3">
         {isSubmitted && submittedText.split('').map((letter, index) => (
-          <span key={index} className="letter" style={{animationDelay: `${index * 0.05}s`}}>
+          <span key={index} className="letter" style={{ animationDelay: `${index * 0.05}s` }}>
             {letter}
           </span>
         ))}
       </div>
-      <div className="d-flex justify-content-between w-50">
-        <Button variant="primary" onClick={() => setShowEngage(true)}>Dig Deeper</Button>
-        <Button variant="success" onClick={handleExperienceRelease}>Experience Release</Button>
-        <Button variant="secondary" onClick={() => setShowAmend(true)}>Amendments</Button>
-      </div>
+      <Row className="w-100 justify-content-center mb-3">
+        <Col xs={12} md={4}>
+          <Button variant="primary" className="custom-button" block onClick={() => navigate('/engage')}>Save and Add Details</Button>
+        </Col>
+        <Col xs={12} md={4}>
+          <Button variant="success" className="custom-button" block onClick={handleExperienceRelease}>Anonymous Submit</Button>
+        </Col>
+        <Col xs={12} md={4}>
+          <Button variant="secondary" className="custom-button" block onClick={() => navigate('/amend')}>Edits</Button>
+        </Col>
+      </Row>
     </Container>
   );
 };
