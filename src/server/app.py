@@ -1,8 +1,9 @@
-from models import User, Apology, IntendedFor
+from models import User, Apology, IntendedFor, Category
 from flask import jsonify, make_response, request
 from flask_restful import Resource
 from config import app, db, api
 from sqlalchemy.exc import SQLAlchemyError
+from datetime import datetime
 
 class Users(Resource):
     def post(self):
@@ -58,24 +59,17 @@ class Apologies(Resource):
 
 api.add_resource(Apologies, '/apologies/')
 
-from datetime import datetime
-from sqlalchemy.exc import SQLAlchemyError  # Make sure this is imported if not already
-from flask import jsonify, make_response, request
-from flask_restful import Resource
-from config import db  # Assuming this import is correct based on your setup
-from models import User, Apology, IntendedFor  # Ensure all models are imported
-
 class UsersWithApology(Resource):
     def post(self):
         data = request.get_json(force=True)
         if not all(key in data for key in ['username', 'email', 'password', 'recipient', 'event_date', 'event_location']):
             return make_response(jsonify({"error": "Missing data"}), 400)
         
-        # Convert event_date from string to date object
+       
         try:
             data['event_date'] = datetime.strptime(data['event_date'], '%Y-%m-%d').date()
         except ValueError:
-            # If the date format is incorrect, return an error
+            
             return make_response(jsonify({"error": "Invalid date format, expected YYYY-MM-DD"}), 400)
 
         try:
@@ -85,11 +79,11 @@ class UsersWithApology(Resource):
 
             last_apology = Apology.query.order_by(Apology.apology_id.desc()).first()
             if last_apology:
-                # Create and add new intended_for instance with the corrected event_date
+                
                 new_intended_for = IntendedFor(
                     recipient=data['recipient'], 
                     event_location=data['event_location'], 
-                    event_date=data['event_date'],  # Now correctly formatted as a date object
+                    event_date=data['event_date'],  
                     apology_id=last_apology.apology_id
                 )
                 db.session.add(new_intended_for)
@@ -102,7 +96,15 @@ class UsersWithApology(Resource):
 
 api.add_resource(UsersWithApology, '/users_with_apology/')
 
+class Categories(Resource):
+    def get(self):
+        try:
+            categories = Category.query.all()
+            return jsonify([{'category_id': category.category_id, 'category_name': category.category_name} for category in categories])
+        except SQLAlchemyError as e:
+            return make_response(jsonify({"error": "Could not fetch categories", "message": str(e)}), 400)
 
+api.add_resource(Categories, '/categories/')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
