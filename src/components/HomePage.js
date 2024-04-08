@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Container, Form, Row, Col } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
   const [apologyText, setApologyText] = useState('');
   const [submittedText, setSubmittedText] = useState(''); 
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleExperienceRelease = () => {
     fetch(`http://localhost:5555/apologies/`, {
@@ -24,18 +24,17 @@ const HomePage = () => {
         setIsSubmitted(true);
         setSubmittedText(apologyText);
         setApologyText('');
-        navigate('/engage');
+        // Removed navigate('/engage');
       } else {
         throw new Error('Failed to submit apology');
       }
     })
     .catch(error => {
       console.error('Error:', error);
-      alert('Failed to submit your apology. Please try again.'); // Improved error feedback
+      alert('Failed to submit your apology. Please try again.');
     });
   };
 
-  // Clear the submission effect after a delay
   useEffect(() => {
     if (isSubmitted) {
       const timer = setTimeout(() => {

@@ -23,29 +23,6 @@ class Users(Resource):
     
 api.add_resource(Users, '/users/')
 
-class UserEdit(Resource):    
-    def patch(self, user_id):
-        user = User.query.get_or_404(user_id)
-        data = request.get_json()
-        if 'username' in data:
-            user.username = data['username']
-        if 'email' in data:
-            user.email = data['email']
-
-        db.session.commit()
-        return jsonify(user.to_dict()), 200    
-
-    def delete(self, user_id):
-        user = User.query.get(user_id)
-        if not user:
-            return {'message': 'User not found'}, 404
-
-        db.session.delete(user)
-        db.session.commit()
-        return {'message': 'User deleted'}, 200
-
-api.add_resource(UserEdit, '/users/<int:user_id>')
-
 class Apologies(Resource):
     def post(self):
         data = request.get_json()
@@ -71,29 +48,26 @@ api.add_resource(Apologies, '/apologies/')
 class UsersWithApology(Resource):
     def post(self):
         data = request.get_json(force=True)
-        required_fields = ['username', 'email', 'password', 'recipient', 'event_date', 'event_location']
+        required_fields = ['username', 'email', 'password', 'recipient', 'event_date', 'event_location', 'apology_id']
         if not all(field in data for field in required_fields):
             return make_response(jsonify({"error": "Missing data for required fields"}), 400)
 
         try:
             data['event_date'] = datetime.strptime(data['event_date'], '%Y-%m-%d').date()
-        except ValueError:
-            return make_response(jsonify({"error": "Invalid date format, expected YYYY-MM-DD"}), 400)
-
-        try:
             new_user = User(username=data['username'], email=data['email'], password=data['password'])
             db.session.add(new_user)
-            db.session.flush()
+            db.session.flush() 
 
-            last_apology = Apology.query.order_by(Apology.apology_id.desc()).first()
+            if not Apology.query.get(data['apology_id']):
+                return make_response(jsonify({"error": "Apology ID does not exist"}), 404)
+
             new_intended_for = IntendedFor(
                 recipient=data['recipient'],
                 event_location=data['event_location'],
                 event_date=data['event_date'],
-                apology_id=last_apology.apology_id
+                apology_id=data['apology_id'],
             )
             db.session.add(new_intended_for)
-
             db.session.commit()
             return make_response(jsonify({"message": "User and apology associated successfully", "user_id": new_user.id}), 201)
 
@@ -102,6 +76,29 @@ class UsersWithApology(Resource):
             return make_response(jsonify({"error": "Could not process request", "message": str(e)}), 400)
 
 api.add_resource(UsersWithApology, '/users_with_apology/')
+
+class UserEdit(Resource):    
+    def patch(self, user_id):
+        user = User.query.get_or_404(user_id)
+        data = request.get_json()
+        if 'username' in data:
+            user.username = data['username']
+        if 'email' in data:
+            user.email = data['email']
+
+        db.session.commit()
+        return jsonify(user.to_dict()), 200    
+
+    def delete(self, user_id):
+        user = User.query.get(user_id)
+        if not user:
+            return {'message': 'User not found'}, 404
+
+        db.session.delete(user)
+        db.session.commit()
+        return {'message': 'User deleted'}, 200
+
+api.add_resource(UserEdit, '/users/<int:user_id>')
 
 class Categories(Resource):
     def get(self):
