@@ -32,7 +32,7 @@ class Apologies(Resource):
 
         new_apology = Apology(apology_text=data['apology_text'])
         db.session.add(new_apology)
-        db.session.flush() 
+        db.session.flush()
 
         for category_id in category_ids:
             if not db.session.query(Category.category_id).filter_by(category_id=category_id).scalar():
@@ -56,7 +56,7 @@ class UsersWithApology(Resource):
             data['event_date'] = datetime.strptime(data['event_date'], '%Y-%m-%d').date()
             new_user = User(username=data['username'], email=data['email'], password=data['password'])
             db.session.add(new_user)
-            db.session.flush() 
+            db.session.flush()
 
             if not Apology.query.get(data['apology_id']):
                 return make_response(jsonify({"error": "Apology ID does not exist"}), 404)
@@ -81,22 +81,16 @@ class UserEdit(Resource):
     def patch(self, user_id):
         user = User.query.get_or_404(user_id)
         data = request.get_json()
-        if 'username' in data:
-            user.username = data['username']
-        if 'email' in data:
-            user.email = data['email']
+        for field in ['username', 'email']:
+            if field in data:
+                setattr(user, field, data[field])
 
-        db.session.commit()
-        return jsonify(user.to_dict()), 200    
-
-    def delete(self, user_id):
-        user = User.query.get(user_id)
-        if not user:
-            return {'message': 'User not found'}, 404
-
-        db.session.delete(user)
-        db.session.commit()
-        return {'message': 'User deleted'}, 200
+        try:
+            db.session.commit()
+            return jsonify(user.to_dict()), 200    
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return make_response(jsonify({"error": "Could not update user", "message": str(e)}), 400)
 
 api.add_resource(UserEdit, '/users/<int:user_id>')
 

@@ -9,7 +9,7 @@ const NavigationBar = () => {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="mr-auto">
-                    <Nav.Link as={NavLink} to="/" exact>Home</Nav.Link>
+                    <Nav.Link as={NavLink} to="/">Home</Nav.Link>
                     <Nav.Link as={NavLink} to="/engage">Engage</Nav.Link>
                     <Nav.Link as={NavLink} to="/memorial">Memorial</Nav.Link>
                     <Nav.Link as={NavLink} to="/amend">Amend</Nav.Link>
@@ -20,4 +20,5 @@ const NavigationBar = () => {
 };
 
 export default NavigationBar;
+
 
