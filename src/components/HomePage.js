@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Container, Form, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom'; 
 
@@ -16,23 +16,27 @@ const HomePage = () => {
       },
       body: JSON.stringify({ apology_text: apologyText }),
     })
-    .then(response => {
-      if (response.ok) {
+    .then(response => response.json())
+    .then(data => {
+      if (data.apology_id) {
+        sessionStorage.setItem('apology_id', data.apology_id);
+        console.log("Apology ID stored:", sessionStorage.getItem('apology_id')); // Log the stored ID to verify
         setIsSubmitted(true);
-        setSubmittedText(apologyText); 
-        setApologyText(''); 
-        return response.json();
+        setSubmittedText(apologyText);
+        setApologyText('');
+        navigate('/engage');
       } else {
         throw new Error('Failed to submit apology');
       }
     })
     .catch(error => {
       console.error('Error:', error);
+      alert('Failed to submit your apology. Please try again.'); // Improved error feedback
     });
   };
 
   // Clear the submission effect after a delay
-  React.useEffect(() => {
+  useEffect(() => {
     if (isSubmitted) {
       const timer = setTimeout(() => {
         setIsSubmitted(false);
@@ -65,13 +69,13 @@ const HomePage = () => {
       </div>
       <Row className="w-100 justify-content-center mb-3">
         <Col xs={12} md={4}>
-          <Button variant="primary" className="custom-button" block onClick={() => navigate('/engage')}>Save and Add Details</Button>
+          <Button variant="primary" className="custom-button" block onClick={() => navigate('/amend')}>Edits</Button>
         </Col>
         <Col xs={12} md={4}>
           <Button variant="success" className="custom-button" block onClick={handleExperienceRelease}>Anonymous Submit</Button>
         </Col>
         <Col xs={12} md={4}>
-          <Button variant="secondary" className="custom-button" block onClick={() => navigate('/amend')}>Edits</Button>
+          <Button variant="secondary" className="custom-button" block onClick={() => navigate('/engage')}>Save and Add Details</Button>
         </Col>
       </Row>
     </Container>

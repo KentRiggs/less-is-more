@@ -55,7 +55,7 @@ class Apologies(Resource):
 
         new_apology = Apology(apology_text=data['apology_text'])
         db.session.add(new_apology)
-        db.session.flush()
+        db.session.flush() 
 
         for category_id in category_ids:
             if not db.session.query(Category.category_id).filter_by(category_id=category_id).scalar():
@@ -64,7 +64,7 @@ class Apologies(Resource):
             db.session.add(new_apology_category)
 
         db.session.commit()
-        return make_response(jsonify(new_apology.to_dict()), 201)
+        return make_response(jsonify({"apology_id": new_apology.apology_id, "message": "Apology created successfully"}), 201)
 
 api.add_resource(Apologies, '/apologies/')
 
