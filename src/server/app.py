@@ -77,22 +77,54 @@ class UsersWithApology(Resource):
 
 api.add_resource(UsersWithApology, '/users_with_apology/')
 
-class UserEdit(Resource):    
-    def patch(self, user_id):
-        user = User.query.get_or_404(user_id)
+class UserDetails(Resource):
+    def get(self, username):
+        user = User.query.filter_by(username=username).first_or_404(description='User not found')
+        return make_response(jsonify(user.to_dict()), 200)
+
+    def patch(self, username):
+        user = User.query.filter_by(username=username).first_or_404(description='User not found')
         data = request.get_json()
-        for field in ['username', 'email']:
+
+        # Update user fields
+        user_fields = ['username', 'email']
+        for field in user_fields:
             if field in data:
                 setattr(user, field, data[field])
 
         try:
             db.session.commit()
-            return jsonify(user.to_dict()), 200    
+            return make_response(jsonify(user.to_dict()), 200) 
         except SQLAlchemyError as e:
             db.session.rollback()
             return make_response(jsonify({"error": "Could not update user", "message": str(e)}), 400)
 
-api.add_resource(UserEdit, '/users/<int:user_id>')
+api.add_resource(UserDetails, '/user-details/<string:username>')
+
+# class ApologyDetails(Resource):
+#     def get(self, apology_id):
+#         apology = Apology.query.get_or_404(apology_id)
+#         user = User.query.get_or_404(apology.user_id)
+#         return jsonify({
+#             'username': user.username,
+#             'email': user.email,
+#             'apology_text': apology.apology_text
+#         })
+
+#     def patch(self, apology_id):
+#         apology = Apology.query.get_or_404(apology_id)
+#         user = User.query.get_or_404(apology.user_id)
+#         data = request.get_json()
+#         if 'username' in data:
+#             user.username = data['username']
+#         if 'email' in data:
+#             user.email = data['email']
+#         if 'apology_text' in data:
+#             apology.apology_text = data['apology_text']
+#         db.session.commit()
+#         return jsonify({'message': 'Updated successfully'})
+
+# api.add_resource(ApologyDetails, '/apology-details/<int:apology_id>')
 
 class Categories(Resource):
     def get(self):
@@ -131,6 +163,7 @@ class MemorialData(Resource):
             return make_response(jsonify({"error": "Could not fetch memorial data", "message": str(e)}), 400)
 
 api.add_resource(MemorialData, '/memorial-data/')
+
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
