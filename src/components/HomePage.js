@@ -40,7 +40,7 @@ const HomePage = () => {
       const timer = setTimeout(() => {
         setIsSubmitted(false);
         setSubmittedText('');
-      }, 10000); // Adjust based on total animation duration
+      }, 3000); // Adjust based on total animation duration
       return () => clearTimeout(timer);
     }
   }, [isSubmitted]);

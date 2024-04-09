@@ -10,11 +10,10 @@ const Amend = () => {
     email: '',
     apology_text: '',
   });
-
+  const [originalUsername, setOriginalUsername] = useState('');  // State to store the original username
   const [fetchError, setFetchError] = useState('');
 
   const fetchUserDetails = (username) => {
-    // Encode the username to handle special characters in the URL path
     const encodedUsername = encodeURIComponent(username);
     fetch(`http://localhost:5555/user-details/${encodedUsername}`)
       .then(response => {
@@ -25,23 +24,20 @@ const Amend = () => {
       })
       .then(data => {
         setUserDetails(data);
+        setOriginalUsername(username);  // Save the original username on successful fetch
         setFetchError('');
       })
       .catch(error => {
         console.error('Fetch Error:', error);
         setFetchError('Failed to fetch details. Please check the username and try again.');
-        // Adding console log to display error details clearly in the console
-        console.log(`Failed to fetch details for username: ${username}. Error: ${error.message}`);
       });
   };
-  
 
   const validationSchema = Yup.object().shape({
     username: Yup.string().required('Username is required'),
     email: Yup.string().email('Invalid email format').required('Email is required'),
-    apology_text: Yup.string(), 
-});
-
+    // apology_text: Yup.string().required('Apology text is required'),
+  });
 
   return (
     <Container>
@@ -60,7 +56,7 @@ const Amend = () => {
         {({ isSubmitting }) => (
           <Form>
             <BootstrapForm.Group controlId="fetchUsername">
-              <BootstrapForm.Label>Enter Username</BootstrapForm.Label>
+              <BootstrapForm.Label>Search for your Username: </BootstrapForm.Label>
               <Field name="username" type="text" placeholder="Enter username to fetch" as={BootstrapForm.Control} />
               <Button variant="secondary" type="submit" disabled={isSubmitting}>
                 Fetch Details
@@ -76,7 +72,8 @@ const Amend = () => {
           enableReinitialize
           validationSchema={validationSchema}
           onSubmit={(values, { setSubmitting }) => {
-            fetch(`http://localhost:5555/user-details/${values.username}`, {
+            console.log("Submitting form with values:", values);
+            fetch(`http://localhost:5555/user-details/${encodeURIComponent(originalUsername)}`, { 
               method: 'PATCH',
               headers: {
                 'Content-Type': 'application/json',
@@ -101,6 +98,7 @@ const Amend = () => {
         >
           {({ isSubmitting }) => (
             <Form>
+              <p>Edit and save your details below</p>
               <BootstrapForm.Group controlId="formUsername">
                 <BootstrapForm.Label>Username</BootstrapForm.Label>
                 <Field name="username" type="text" as={BootstrapForm.Control} />
@@ -111,10 +109,10 @@ const Amend = () => {
                 <Field name="email" type="email" as={BootstrapForm.Control} />
               </BootstrapForm.Group>
 
-              <BootstrapForm.Group controlId="formApologyText">
+              {/* <BootstrapForm.Group controlId="formApologyText">
                 <BootstrapForm.Label>Apology Text</BootstrapForm.Label>
                 <Field name="apology_text" as={BootstrapForm.Control} component="textarea" />
-              </BootstrapForm.Group>
+              </BootstrapForm.Group> */}
 
               <Button variant="primary" type="submit" disabled={isSubmitting}>
                 Save Changes
