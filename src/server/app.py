@@ -1,5 +1,5 @@
 from models import User, Apology, IntendedFor, Category, ApologyCategory
-from flask import jsonify, make_response, request
+from flask import jsonify, make_response, request, session
 from flask_restful import Resource
 from config import app, db, api
 from sqlalchemy.exc import SQLAlchemyError
@@ -164,6 +164,52 @@ class MemorialData(Resource):
 
 api.add_resource(MemorialData, '/memorial-data/')
 
+class Login(Resource):
+    def post(self):
+        data = request.get_json(force=True)
+        user = User.query.filter_by(username=data.get('username')).first()
+        if not user:  
+            return make_response(jsonify({"error": "User not found"}), 404)
+
+        session['user_id'] = user.id
+
+        try:
+            user_data = user.to_dict() if hasattr(user, 'to_dict') else {"username": user.username}
+            return make_response(jsonify(user_data), 200)
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return make_response(jsonify({"error": "Database error", "message": str(e)}), 500)
+
+api.add_resource(Login, '/login')
+
+class Logout(Resource):
+    def delete(self):
+        session.pop('user_id', None)  # Safely remove user_id from session if it exists
+        return make_response(jsonify({'message': 'Logged out successfully'}), 204)
+
+api.add_resource(Logout, '/logout')
+
+class CheckSession(Resource):
+    def get(self):
+        user_id = session.get('user_id')
+        if not user_id:
+            return make_response(jsonify({'error': 'Not Authorized'}), 401)
+
+        user = User.query.get(user_id)
+        if not user:
+            return make_response(jsonify({'error': 'User not found'}), 404)
+        
+        try:
+            return make_response(jsonify(user.to_dict()), 200)
+        except AttributeError:
+            # Fallback if to_dict doesn't exist or fails, sending minimal user info
+            user_info = {"username": user.username}
+            return make_response(jsonify(user_info), 200)
+        except Exception as e:
+            # Generic exception handling if something else goes wrong
+            return make_response(jsonify({'error': 'Server error', 'message': str(e)}), 500)
+
+api.add_resource(CheckSession, '/check_session')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

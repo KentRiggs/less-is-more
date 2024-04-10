@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Formik, Field, Form } from 'formik';
 import { Button, Container, Form as BootstrapForm } from 'react-bootstrap';
-import NavigationBar from './NavigationBar';
 import * as Yup from 'yup';
 
 const Amend = () => {
@@ -41,7 +40,6 @@ const Amend = () => {
 
   return (
     <Container>
-      <NavigationBar />
       <h1>Edit Your Details</h1>
       <Formik
         initialValues={{ username: '' }}

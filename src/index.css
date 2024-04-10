@@ -41,4 +41,32 @@ code {
 .text-input {
   text-align: center; /* Centers text in the input */
 }
+.custom-button {
+  font-family: 'Courier New';
+  text-align: center;
+  width: 75%;
+}
+/* NavigationBar.css */
+.custom-navbar {
+  background-color: #f8f9fa; /* Light grey background */
+  padding: 10px 50px; /* Adequate padding around the nav bar */
+}
+
+.nav-link {
+  margin-right: 20px; /* Space between navigation links */
+}
+
+.login-button {
+  float: right; /* Align the login/logout button to the right */
+  margin-left: auto; /* Auto margin for automatic spacing */
+}
+
+.nav-button {
+  border: none;
+  background-color: transparent;
+  color: #007bff; /* Bootstrap primary color for link simulation */
+  text-align: left;
+  padding: 0.5rem 1rem;
+  font-size: 16px;
+}
 

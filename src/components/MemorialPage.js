@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
-import NavigationBar from './NavigationBar';
 
 const MemorialPage = () => {
   const [memorials, setMemorials] = useState([]);
@@ -15,7 +14,6 @@ const MemorialPage = () => {
 
   return (
     <Container className="d-flex flex-column align-items-center justify-content-center" style={{ height: '100vh' }}>
-      <NavigationBar />
       <h1>Welcome to the Memorial Page</h1>
       {memorials.map((memorial, index) => (
         <p key={index} style={{ textAlign: 'center' }}>

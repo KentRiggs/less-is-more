@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Formik, Field, Form } from 'formik';
 import { Button, Container, Form as BootstrapForm } from 'react-bootstrap';
-import NavigationBar from './NavigationBar';
 import * as Yup from 'yup';
 
 const EngagePage = () => {
@@ -27,7 +26,6 @@ const EngagePage = () => {
 
   return (
     <Container>
-      <NavigationBar />
       <h1>Engage in Apology</h1>
       <Formik
         initialValues={{
@@ -41,7 +39,7 @@ const EngagePage = () => {
         }}
         validationSchema={validationSchema}
         onSubmit={(values, { setSubmitting, resetForm }) => {
-          // Retrieve apology_id from session storage
+          //Retrieve apology_id from session storage
           const apologyId = sessionStorage.getItem('apology_id');
           if (!apologyId) {
             alert("No apology ID found. Please start from the Home page.");
@@ -49,7 +47,7 @@ const EngagePage = () => {
             return;  // Prevent further action if no apology ID is available
           }
 
-          // Append apology_id to the form values before submission
+          //Append apology_id to the form values before submission
           values.apology_id = apologyId;
 
           fetch('http://localhost:5555/users_with_apology/', {
