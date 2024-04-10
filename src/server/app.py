@@ -175,7 +175,7 @@ class Login(Resource):
         if bcrypt.check_password_hash(user.password, data.get('password')):
             session['user_id'] = user.id
             try:
-                user_data = {"username": user.username}  # Simplified user data for the example
+                user_data = {"username": user.username} 
                 return make_response(jsonify(user_data), 200)
             except Exception as e:
                 db.session.rollback()

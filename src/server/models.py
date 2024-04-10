@@ -17,7 +17,7 @@ class User(db.Model, SerializerMixin):
 
     @property
     def password(self):
-        raise AttributeError('password is not a readable attribute')
+        return self._password_hash
 
     @password.setter
     def password(self, password):

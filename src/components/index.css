@@ -1,0 +1,239 @@
+.home-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* Aligns content to the top */
+  min-height: 100vh;
+  font-family: 'Courier New', Courier, monospace; 
+}
+
+.page-title {
+  text-align: center;
+  font-size: 60px;
+  width: 100%;
+  margin-top: 120px; /* adjust gap from the top */
+  margin-bottom: 10px;
+}
+
+.text-input-group {
+  width: 75%; 
+}
+
+.text-input {
+  width: 75%; 
+  height: 40px;
+  margin: 0 auto;
+  font-size: 16px;
+  display: block;
+  box-sizing: border-box;
+}
+
+.text-container {
+  margin: 10px 0; 
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
+  width: 75%; 
+}
+
+.edit-button, .submit-button, .details-button {
+  width: 100%; /* Each button fills the container */
+  margin-bottom: 15px; 
+  font-size: 18px; 
+  
+}
+.custom-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #f8f9fa; /* Bootstrap light background color*/
+}
+
+.nav-button {
+  color: #007bff; /* Bootstrap primary color for links */
+  text-decoration: none; 
+  padding: 5px 10px;
+  margin-right: 10px; /* Space between navigation links */
+}
+
+.nav-button:hover {
+  color: #0056b3; /* Darker blue on hover */
+  text-decoration: none; /* Ensures no underline appears on hover */
+}
+
+.login-button {
+  margin-right: right; /* Pushes the login button to the right side of the navbar */
+  border: none; 
+  background-color: transparent; 
+  color: #28a745; /* success color */
+  cursor: pointer;
+}
+
+.login-button:hover {
+  color: #218838; 
+}
+
+/* Additional styling for the alert and modal */
+.alert-danger {
+  margin: 10px 0;
+  width: 100%;
+  text-align: center;
+}
+.login-modal {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  background: white;
+  z-index: 1050; /* Make sure it's above other content */
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-input {
+  margin-bottom: 10px; /* Space between inputs */
+  padding: 10px;
+  font-size: 16px; 
+}
+
+.login-button {
+  padding: 10px 15px;
+  width: 100%;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.login-alert {
+  margin-bottom: 15px; /* Spacing above the alert message */
+}
+/* General styles for the Amend page */
+.amend-container {
+  max-width: 600px; /* Set a max-width for the container */
+  margin: 0 auto; /* Center the container horizontally */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Align items to the center */
+}
+
+.amend-title {
+  font-size: 24px; /* Larger font size for the title */
+  font-weight: bold;
+  margin-bottom: 20px; /* Space below the title */
+}
+
+.amend-input {
+  width: 100%; /* Full width of its parent */
+  padding: 10px;
+  margin-bottom: 15px; /* Space between form inputs */
+  border: 1px solid #ccc; /* Subtle border for inputs */
+  border-radius: 4px; /* Rounded corners for the input fields */
+}
+
+.amend-textarea {
+  width: 100%; /* Full width of its parent */
+  height: 150px; /* Taller text area for longer content */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.amend-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  background-color: #007bff; /* Bootstrap primary button color */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 20px; /* Space below the button */
+}
+
+.amend-button:hover {
+  background-color: #0056b3; /* Darker on hover */
+}
+/* General styles for the Engage page */
+.engage-container {
+  max-width: 600px; /* Set a max-width for the container */
+  margin: 0 auto; /* Center the container horizontally */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* This should center all child elements */
+}
+
+.engage-title {
+  font-size: 24px; 
+  font-weight: bold;
+  text-align: center; /* Ensures the title is centered if it's not inheriting center alignment */
+  margin-bottom: 20px; /* Space below the title */
+}
+
+.engage-input, .engage-select {
+  width: 75%; 
+  padding: 10px;
+  margin: 0 auto 15px auto; 
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.engage-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: block; /* Make the button a block element to apply margin */
+  margin: 20px auto 0 auto; /* Centers the button horizontally and adds space above */
+}
+
+.engage-button:hover {
+  background-color: #0056b3;
+}
+/* General styles for the Memorial page */
+.memorial-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* Aligns content to the top */
+  min-height: 100vh; /* Ensures the container takes at least the full height of the viewport */
+  padding: 20px; /* Padding around the content */
+  padding-top: 40px; /* Additional top padding to raise content */
+}
+
+.memorial-title {
+  text-align: center;
+  font-size: 40px; 
+  font-weight: bold;
+  margin-bottom: 20px; 
+}
+
+.memorial-text {
+  text-align: left; 
+  margin: 5px auto; 
+  font-size: 16px; 
+  text-transform: lowercase; 
+  padding: .1px 0; 
+  width: 80%; 
+  max-width: 800px; 
+  box-sizing: border-box; 
+}
+
+
+
+
+
+

@@ -1,12 +1,12 @@
 import React, { useState, useContext } from 'react';
-import { Button, Form, Alert } from 'react-bootstrap';
-import { UserContext } from './UserContext'; // Adjust the import path as needed
+import { UserContext } from './UserContext'; 
+import './index.css'; // Ensure CSS is imported
 
-function Login() {
+function Login({ onClose }) { // `onClose` function passed as a prop to handle modal closing
     const { setUser } = useContext(UserContext);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");  // State to handle any login errors
+    const [error, setError] = useState("");  
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -26,6 +26,11 @@ function Login() {
         .then((user) => {
             setUser(user);  
             setError("");  
+            setUsername(""); // Clear the username field
+            setPassword(""); // Clear the password field
+            if (onClose) {
+                onClose(); // Close the modal
+            }
         })
         .catch((error) => {
             console.error('Login error:', error);
@@ -34,32 +39,30 @@ function Login() {
     };
 
     return (
-        <Form onSubmit={handleSubmit}>
-            error && <Alert variant="danger">{error}</Alert>
-            <Form.Group controlId="formBasicUsername">
-                <Form.Label>Username</Form.Label>
-                <Form.Control
+        <div className="login-modal">
+            {error && <div className="login-alert alert alert-danger">{error}</div>}
+            <form className="login-form" onSubmit={handleSubmit}>
+                <input
+                    className="login-input"
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="Enter username"
                     required
                 />
-            </Form.Group>
-            <Form.Group controlId="formBasicPassword">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
+                <input
+                    className="login-input"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
                     required
                 />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-                Login
-            </Button>
-        </Form>
+                <button className="login-button btn btn-primary" type="submit">
+                    Login
+                </button>
+            </form>
+        </div>
     );
 }
 

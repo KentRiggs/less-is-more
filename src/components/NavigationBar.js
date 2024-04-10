@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Navbar, Nav, Button, Alert, Modal } from 'react-bootstrap';
 import Login from './Login';
-import { UserContext } from './UserContext'; 
+import { UserContext } from './UserContext';
+import './index.css'; 
 
 const NavigationBar = () => {
     const { user, setUser } = useContext(UserContext);
@@ -10,24 +11,7 @@ const NavigationBar = () => {
     const [showLogin, setShowLogin] = useState(false);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (!user) {
-            fetch("http://localhost:5555/check_session", {
-                credentials: 'include'
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Session not valid or expired');
-                    }
-                    return response.json();
-                })
-                .then(data => setUser(data))
-                .catch(error => {
-                    setError(error.message);
-                });
-        }
-    }, [user, setUser]);
-
+    // Function to handle user logout
     const handleLogout = () => {
         fetch("http://localhost:5555/logout", { 
             method: 'DELETE', 
@@ -37,24 +21,25 @@ const NavigationBar = () => {
                 if (!response.ok) {
                     throw new Error('Failed to logout');
                 }
-                setUser(null);
-                navigate('/');
+                setUser(null); // Clear user context
+                navigate('/'); // Navigate to homepage after logout
             })
             .catch(error => {
                 console.error('Logout error:', error);
-                setError('Logout failed. Please try again.');
+                setError('Logout failed. Please try again.'); // Set error if logout fails
             });
     };
 
+    // Toggle function for showing/hiding the login modal
     const handleLoginModal = () => setShowLogin(!showLogin);
 
     return (
         <Navbar className="custom-navbar" expand="lg">
             <Nav className="mr-auto">
-                <Nav.Link as={NavLink} to="/" className="nav-button">Home</Nav.Link>
-                <Nav.Link as={NavLink} to="/engage" className="nav-button">Engage</Nav.Link>
-                <Nav.Link as={NavLink} to="/memorial" className="nav-button">Memorial</Nav.Link>
-                <Nav.Link as={NavLink} to="/amend" className="nav-button">Amend</Nav.Link>
+                <NavLink to="/" className="nav-button">Home</NavLink>
+                <NavLink to="/engage" className="nav-button">Engage</NavLink>
+                <NavLink to="/memorial" className="nav-button">Memorial</NavLink>
+                <NavLink to="/amend" className="nav-button">Amend</NavLink>
                 {user ? (
                     <Button onClick={handleLogout} variant="outline-danger" className="login-button">Logout</Button>
                 ) : (
@@ -63,12 +48,15 @@ const NavigationBar = () => {
             </Nav>
             {error && <Alert variant="danger">{error}</Alert>}
 
-            <Modal show={showLogin} onHide={handleLoginModal}>
+            <Modal show={showLogin} onHide={handleLoginModal} centered>
                 <Modal.Header closeButton>
-                    <Modal.Title>Login</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Login onLogin={(user) => { setUser(user); setShowLogin(false); navigate('/'); }} />
+                    <Login onLogin={(user) => { 
+                        setUser(user);  // Set user in context
+                        setShowLogin(true);  // Close modal on successful login
+                        navigate('/');  // Navigate to homepage
+                    }} />
                 </Modal.Body>
             </Modal>
         </Navbar>

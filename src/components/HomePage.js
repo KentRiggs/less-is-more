@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Container, Form, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import './index.css';
 
 const HomePage = () => {
   const [apologyText, setApologyText] = useState('');
-  const [submittedText, setSubmittedText] = useState(''); 
+  const [submittedText, setSubmittedText] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const navigate = useNavigate();
 
@@ -44,39 +45,33 @@ const HomePage = () => {
   }, [isSubmitted]);
 
   return (
-    <Container className="custom-container d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '100vh' }}>
-    <h1 style={{ fontFamily: 'Courier New', textAlign: 'center' }}>What needs to be let go?</h1>
-    <Form.Group as={Row} controlId="apologyText" className="mb-3">
-        <Col sm={12}>
-            <Form.Control
-                type="text"
-                placeholder="Enter an apology ..."
-                value={apologyText}
-                onChange={(e) => setApologyText(e.target.value)}
-                className="text-input"
-            />
-        </Col>
-    </Form.Group>
-    <div className="text-container mb-3">
+    <Container className="home-page-container">
+      <h1 className="page-title">What needs to be let go?</h1>
+      <Form.Group className="text-input-group" controlId="apologyText">
+        <Form.Control
+          type="text"
+          placeholder="Enter an apology ..."
+          value={apologyText}
+          onChange={(e) => setApologyText(e.target.value)}
+          className="text-input"
+        />
+      </Form.Group>
+      <div className="text-container">
         {isSubmitted && submittedText.split('').map((letter, index) => (
-            <span key={index} className="letter" style={{ animationDelay: `${index * 0.05}s` }}>
-                {letter}
-            </span>
+          <span key={index} className="animated-letter" style={{ animationDelay: `${index * 0.05}s` }}>
+            {letter}
+          </span>
         ))}
-    </div>
-    <Row className="w-100 justify-content-center mb-3">
-        <Col xs={12} md={4}>
-            <Button variant="primary" className="custom-button" block onClick={() => navigate('/amend')}>Edits</Button>
+      </div>
+      <Row className="button-container">
+        <Col>
+          <Button className="submit-button" onClick={handleExperienceRelease}>Submit Anonymously</Button>
         </Col>
-        <Col xs={12} md={4}>
-            <Button variant="success" className="custom-button" block onClick={handleExperienceRelease}>Anonymous Submit</Button>
+        <Col>
+          <Button className="details-button" onClick={() => navigate('/engage')}>Add Details</Button>
         </Col>
-        <Col xs={12} md={4}>
-            <Button variant="secondary" className="custom-button" block onClick={() => navigate('/engage')}>Save and Add Details</Button>
-        </Col>
-    </Row>
-</Container>
-
+      </Row>
+    </Container>
   );
 };
 

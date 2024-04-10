@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Formik, Field, Form } from 'formik';
-import { Button, Container, Form as BootstrapForm } from 'react-bootstrap';
 import * as Yup from 'yup';
+import './index.css'; // Ensure this is the correct path to your CSS file
 
 const EngagePage = () => {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    // Fetch categories from your backend and set them in state
     fetch('http://localhost:5555/categories/')
       .then(response => response.json())
       .then(data => setCategories(data))
@@ -25,8 +24,8 @@ const EngagePage = () => {
   });
 
   return (
-    <Container>
-      <h1>Engage in Apology</h1>
+    <div className="engage-container">
+      <h1 className="engage-title">Complete Your Apology</h1>
       <Formik
         initialValues={{
           username: '',
@@ -39,15 +38,12 @@ const EngagePage = () => {
         }}
         validationSchema={validationSchema}
         onSubmit={(values, { setSubmitting, resetForm }) => {
-          //Retrieve apology_id from session storage
           const apologyId = sessionStorage.getItem('apology_id');
           if (!apologyId) {
             alert("No apology ID found. Please start from the Home page.");
             setSubmitting(false);
-            return;  // Prevent further action if no apology ID is available
+            return;
           }
-
-          //Append apology_id to the form values before submission
           values.apology_id = apologyId;
 
           fetch('http://localhost:5555/users_with_apology/', {
@@ -66,7 +62,7 @@ const EngagePage = () => {
           })
           .then(data => {
             console.log(data);
-            resetForm(); 
+            resetForm();
             sessionStorage.removeItem('apology_id');  
           })
           .catch(error => {
@@ -78,55 +74,28 @@ const EngagePage = () => {
       >
         {({ isSubmitting }) => (
           <Form>
-            <BootstrapForm.Group controlId="formUsername">
-              <BootstrapForm.Label>Username</BootstrapForm.Label>
-              <Field name="username" type="text" as={BootstrapForm.Control} />
-            </BootstrapForm.Group>
-
-            <BootstrapForm.Group controlId="formEmail">
-              <BootstrapForm.Label>Email</BootstrapForm.Label>
-              <Field name="email" type="email" as={BootstrapForm.Control} />
-            </BootstrapForm.Group>
-
-            <BootstrapForm.Group controlId="formPassword">
-              <BootstrapForm.Label>Password</BootstrapForm.Label>
-              <Field name="password" type="password" as={BootstrapForm.Control} />
-            </BootstrapForm.Group>
-
-            <BootstrapForm.Group controlId="formRecipient">
-              <BootstrapForm.Label>Recipient (Who)</BootstrapForm.Label>
-              <Field name="recipient" type="text" as={BootstrapForm.Control} />
-            </BootstrapForm.Group>
-
-            <BootstrapForm.Group controlId="formEventDate">
-              <BootstrapForm.Label>Event Date (When)</BootstrapForm.Label>
-              <Field name="event_date" type="date" as={BootstrapForm.Control} />
-            </BootstrapForm.Group>
-
-            <BootstrapForm.Group controlId="formEventLocation">
-              <BootstrapForm.Label>Event Location (Where)</BootstrapForm.Label>
-              <Field name="event_location" type="text" as={BootstrapForm.Control} />
-            </BootstrapForm.Group>
-
-            <BootstrapForm.Group controlId="formCategory">
-              <BootstrapForm.Label>Category</BootstrapForm.Label>
-              <Field name="category_id" as={BootstrapForm.Control} component="select">
-                <option value="">Select a Category</option>
-                {categories.map((category) => (
-                  <option key={category.category_id} value={category.category_id}>
-                    {category.category_name}
-                  </option>
-                ))}
-              </Field>
-            </BootstrapForm.Group>
-
-            <Button variant="primary" type="submit" disabled={isSubmitting}>
+            <Field name="username" type="text" placeholder="who are you?" className="engage-input" />
+            <Field name="email" type="email" placeholder="what is your email address?" className="engage-input" />
+            <Field name="password" type="password" placeholder="enter a password" className="engage-input" />
+            <Field name="recipient" type="text" placeholder="who were they?" className="engage-input" />
+            <Field name="event_date" type="date" placeholder="when was it?" className="engage-input" />
+            <Field name="event_location" type="text" placeholder="where was it" className="engage-input" />
+            <Field as="select" name="category_id" className="engage-select">
+              <option value="">Select an apology Category</option>
+              {categories.map((category) => (
+                <option key={category.category_id} value={category.category_id}>
+                  {category.category_name}
+                </option>
+              ))}
+            </Field>
+            <div></div>
+            <button type="submit" className="engage-button" disabled={isSubmitting}>
               Submit
-            </Button>
+            </button>
           </Form>
         )}
       </Formik>
-    </Container>
+    </div>
   );
 };
 
