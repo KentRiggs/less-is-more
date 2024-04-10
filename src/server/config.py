@@ -26,4 +26,4 @@ bcrypt = Bcrypt(app)
 
 app.secret_key = b'\b83\h23\drq\eyn)\c46\vnq\z35\g4s\n24\hw8\cx4\yfe\m43,'
 app.config['SESSION_COOKIE_HTTPONLY'] = True
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Or 'Strict' based on your needs
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
