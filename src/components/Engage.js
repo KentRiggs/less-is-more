@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
-import './index.css'; // Ensure this is the correct path to your CSS file
+import './index.css'; 
 
 const EngagePage = () => {
   const [categories, setCategories] = useState([]);

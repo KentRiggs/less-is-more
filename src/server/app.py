@@ -5,6 +5,7 @@ from config import app, db, api
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
 from config import bcrypt 
+from sqlalchemy.sql import text
 
 class Users(Resource):
     def post(self):
@@ -139,29 +140,34 @@ api.add_resource(Categories, '/categories/')
 
 class MemorialData(Resource):
     def get(self):
-        try:
+        # try:
            
-            results = db.session.query(
-                User.username,
-                Apology.apology_text,
-                IntendedFor.recipient,
-                IntendedFor.event_location,
-                IntendedFor.event_date,
-                Category.category_name
-            ).join(Apology, User.id == Apology.user_id  
-            ).join(IntendedFor, Apology.apology_id == IntendedFor.apology_id  
-            ).join(ApologyCategory, ApologyCategory.apology_id == Apology.apology_id  
-            ).join(Category, ApologyCategory.category_id == Category.category_id  
-            ).all()
-   
-            memorials = [
-                {
-                    "message": f"{result.username} says {result.apology_text} to {result.recipient} from {result.event_location} on {result.event_date.strftime('%Y-%m-%d')} in category {result.category_name}"
-                } for result in results
-            ]
-            return jsonify(memorials)
-        except SQLAlchemyError as e:
-            return make_response(jsonify({"error": "Could not fetch memorial data", "message": str(e)}), 400)
+        #     results = db.session.query(
+        #         User.username,
+        #         Apology.apology_text,
+        #         IntendedFor.recipient,
+        #         IntendedFor.event_location,
+        #         IntendedFor.event_date,
+        #         Category.category_name
+        #     ).join(Apology, User.id == Apology.user_id  
+        #     ).join(IntendedFor, Apology.apology_id == IntendedFor.apology_id  
+        #     ).join(ApologyCategory, ApologyCategory.apology_id == Apology.apology_id  
+        #     ).join(Category, ApologyCategory.category_id == Category.category_id  
+        #     ).all()
+        #     
+        #     memorials = [
+        #         {
+        #             "message": f"{result.username} says {result.apology_text} to {result.recipient} from {result.event_location} on {result.event_date.strftime('%Y-%m-%d')} in category {result.category_name}"
+        #         } for result in results
+        #     ]
+        #     return jsonify(memorials)
+        # except SQLAlchemyError as e:
+        #     return make_response(jsonify({"error": "Could not fetch memorial data", "message": str(e)}), 400)
+
+        apologies = Apology.query.all()
+        memorials = [{"message": f"{apology.user.username} says {apology.apology_text} to {apology.recipients()} in category"} for apology in apologies]
+        
+        return jsonify(memorials)
 
 api.add_resource(MemorialData, '/memorial-data/')
 
@@ -191,6 +197,32 @@ class Logout(Resource):
         return make_response(jsonify({'message': 'Logged out successfully'}), 204)
 
 api.add_resource(Logout, '/logout')
+
+class Register(Resource):
+    def post(self):
+        data = request.get_json(force=True)
+
+        # Check for existing user by username or email
+        if User.query.filter((User.username == data.get('username')) | (User.email == data.get('email'))).first():
+            return make_response(jsonify({"error": "Username or email already in use"}), 409)
+
+        # Create new user with hashed password
+        new_user = User(
+            username=data.get('username'),
+            email=data.get('email')
+        )
+        new_user.password = data.get('password') 
+
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            # Return minimal user data to confirm creation
+            return make_response(jsonify({"message": "User created successfully", "username": new_user.username}), 201)
+        except Exception as e:
+            db.session.rollback()
+            return make_response(jsonify({"error": "Database error", "message": str(e)}), 500)
+
+api.add_resource(Register, '/register')
 
 # class CheckSession(Resource):
 #     def get(self):
