@@ -1,59 +1,66 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Formik, Field, Form } from 'formik';
+import { UserContext } from './UserContext'; 
 import * as Yup from 'yup';
-import './index.css'; // Ensure this is the correct path to your CSS file
+import './index.css';
 
 const Amend = () => {
+  const { user } = useContext(UserContext);
   const [userDetails, setUserDetails] = useState({
     username: '',
     email: '',
     apology_text: '',
+    password: '' 
   });
-  const [originalUsername, setOriginalUsername] = useState('');
   const [fetchError, setFetchError] = useState('');
 
-  const fetchUserDetails = (username) => {
+  const fetchUserDetails = (username, password) => {
     const encodedUsername = encodeURIComponent(username);
-    fetch(`http://localhost:5555/user-details/${encodedUsername}`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Could not fetch user details');
-        }
-        return response.json();
-      })
-      .then(data => {
-        setUserDetails(data);
-        setOriginalUsername(username); 
-        setFetchError('');
-      })
-      .catch(error => {
-        console.error('Fetch Error:', error);
-        setFetchError('Failed to fetch details. Please check the username and try again.');
-      });
+    fetch(`http://localhost:5555/user-details/${encodedUsername}`, {
+      method: "POST", 
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Could not fetch user details');
+      }
+      return response.json();
+    })
+    .then(data => {
+      setUserDetails(data);
+      setFetchError('');
+    })
+    .catch(error => {
+      console.error('Fetch Error:', error);
+      setFetchError('Failed to fetch details. Please check the username and try again.');
+    });
   };
 
   const validationSchema = Yup.object().shape({
     username: Yup.string().required('Username is required'),
     email: Yup.string().email('Invalid email format').required('Email is required'),
     apology_text: Yup.string().required('Apology text is required'),
+    password: Yup.string().required('Password is required for verification') 
   });
 
   return (
     <div className="amend-container">
       <h1 className="amend-title">Edit Your Details</h1>
       <Formik
-        initialValues={{ username: '' }}
-        validationSchema={Yup.object({
-          username: Yup.string().required('Username is required to fetch details'),
-        })}
-        onSubmit={({ username }, { setSubmitting }) => {
-          fetchUserDetails(username);
+        initialValues={{ username: user?.username || '', password: '' }} 
+        validationSchema={validationSchema}
+        onSubmit={({ username, password }, { setSubmitting }) => {
+          fetchUserDetails(username, password);
           setSubmitting(false);
         }}
       >
         {({ isSubmitting }) => (
           <Form>
             <Field name="username" type="text" placeholder="Enter username to fetch" className="amend-input" />
+            <Field name="password" type="password" placeholder="Enter your password" className="amend-input" />
             <button type="submit" className="amend-button" disabled={isSubmitting}>
               Fetch Details
             </button>
@@ -67,7 +74,7 @@ const Amend = () => {
           enableReinitialize
           validationSchema={validationSchema}
           onSubmit={(values, { setSubmitting }) => {
-            fetch(`http://localhost:5555/user-details/${encodeURIComponent(originalUsername)}`, { 
+            fetch(`http://localhost:5555/user-details/${encodeURIComponent(values.username)}`, { 
               method: 'PATCH',
               headers: {
                 'Content-Type': 'application/json',

@@ -23,7 +23,6 @@ function CreateUser({ onUserCreated }) {
             return response.json();
         })
         .then((user) => {
-            // Only call onUserCreated if it's actually a function
             if (typeof onUserCreated === "function") {
                 onUserCreated(user);
             }
@@ -35,7 +34,7 @@ function CreateUser({ onUserCreated }) {
         })
         .catch((error) => {
             console.error('Registration error:', error);
-            setError(error.message); // Display any error related to registration
+            setError(error.message); 
         });
     };
 
@@ -62,7 +61,6 @@ function CreateUser({ onUserCreated }) {
                     required
                 />
             </Form.Group>
-
             <Form.Group controlId="formBasicPassword">
                 <Form.Label>Password</Form.Label>
                 <Form.Control
@@ -73,7 +71,6 @@ function CreateUser({ onUserCreated }) {
                     required
                 />
             </Form.Group>
-
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
             <Button variant="primary" type="submit">

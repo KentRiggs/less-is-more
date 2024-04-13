@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { UserContext } from './UserContext'; 
-import './index.css'; // Ensure CSS is imported
+import './index.css';
 
 function Login({ onClose }) { // `onClose` function passed as a prop to handle modal closing
     const { setUser } = useContext(UserContext);

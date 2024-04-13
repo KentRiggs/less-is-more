@@ -231,6 +231,25 @@
   max-width: 800px; 
   box-sizing: border-box; 
 }
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);  /* You can adjust this value to create a slight upward motion as it fades */
+  }
+}
+
+.animated-letter {
+  display: inline-block;
+  opacity: 0;
+  animation-name: fadeOut;
+  animation-duration: 5s; /* Control how long the fade takes */
+  animation-fill-mode: forwards; /* Keeps the letter at the final state of the animation */
+  animation-timing-function: ease-in-out;
+}
 
 
 

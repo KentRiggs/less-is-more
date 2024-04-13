@@ -36,10 +36,11 @@ const HomePage = () => {
 
   useEffect(() => {
     if (isSubmitted) {
+      // Extend or remove timeout as needed based on CSS animation
       const timer = setTimeout(() => {
         setIsSubmitted(false);
         setSubmittedText('');
-      }, 3000);
+      }, 10000);  // Match this duration to your longest animation delay
       return () => clearTimeout(timer);
     }
   }, [isSubmitted]);

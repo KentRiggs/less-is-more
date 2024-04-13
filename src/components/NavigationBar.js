@@ -61,7 +61,7 @@ const NavigationBar = () => {
                 <Modal.Body>
                     <Login onLogin={(user) => { 
                         localStorage.setItem('user', JSON.stringify(user));  // Store user in localStorage
-                        setUser(user);  // Set user in context
+                        setUser(user);  
                         setShowLogin(false);  // Close modal on successful login
                         navigate('/');  // Navigate to homepage
                     }} />
@@ -76,7 +76,7 @@ const NavigationBar = () => {
                         localStorage.setItem('user', JSON.stringify(user));  // Store new user in localStorage
                         setUser(user);  // Set user in context
                         setShowCreate(false);  // Close modal on successful account creation
-                        navigate('/');  // Navigate to homepage
+                        navigate('/');  
                     }} />
                 </Modal.Body>
             </Modal>

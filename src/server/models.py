@@ -50,8 +50,6 @@ class Apology(db.Model, SerializerMixin):
     def recipients(self):
         names = "".join([intended.recipient for intended in self.intended_for])
         return f"{names} from {self.intended_for[0].event_location} ON {self.intended_for[0].event_date.strftime('%Y-%m-%d')}"
-        
-#  {apology.intended_for.recipient} from {apology.intended_for.event_location} on {
 
     def __repr__(self):
         return f'<Apology apology_id={self.apology_id}>'
