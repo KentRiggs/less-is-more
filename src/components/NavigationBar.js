@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Navbar, Nav, Button, Alert, Modal } from 'react-bootstrap';
 import Login from './Login';
-import CreateUser from './CreateUser'; // Ensure you import CreateUser if it is used as a modal similar to Login
+import CreateUser from './CreateUser'; 
 import { UserContext } from './UserContext';
 import './index.css';
 
@@ -10,7 +10,7 @@ const NavigationBar = () => {
     const { user, setUser } = useContext(UserContext);
     const [error, setError] = useState('');
     const [showLogin, setShowLogin] = useState(false);
-    const [showCreate, setShowCreate] = useState(false);  // State for showing the CreateUser modal
+    const [showCreate, setShowCreate] = useState(false);  
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -37,15 +37,14 @@ const NavigationBar = () => {
 
     return (
         <Navbar className="custom-navbar" expand="lg">
-            <Nav className="mr-auto">
+            <Nav className="nav-group">
                 <NavLink to="/" className="nav-button">Home</NavLink>
-                <NavLink to="/engage" className="nav-button">Engage</NavLink>
                 <NavLink to="/memorial" className="nav-button">Memorial</NavLink>
                 <NavLink to="/amend" className="nav-button">Amend</NavLink>
+            </Nav>
+            <Nav className="nav-group">
                 {user ? (
-                    <>
-                        <Button onClick={handleLogout} variant="outline-danger" className="login-button">Logout</Button>
-                    </>
+                    <Button onClick={handleLogout} variant="outline-danger" className="login-button">Logout</Button>
                 ) : (
                     <>
                         <Button onClick={handleLoginModal} variant="outline-success" className="login-button">Login</Button>
@@ -55,9 +54,6 @@ const NavigationBar = () => {
             </Nav>
             {error && <Alert variant="danger">{error}</Alert>}
             <Modal show={showLogin} onHide={handleLoginModal} centered>
-                <Modal.Header closeButton>
-                    <Modal.Title>Login</Modal.Title>
-                </Modal.Header>
                 <Modal.Body>
                     <Login onLogin={(user) => { 
                         localStorage.setItem('user', JSON.stringify(user));  // Store user in localStorage
@@ -68,15 +64,12 @@ const NavigationBar = () => {
                 </Modal.Body>
             </Modal>
             <Modal show={showCreate} onHide={handleCreateModal} centered>
-                <Modal.Header closeButton>
-                    <Modal.Title>Create Account</Modal.Title>
-                </Modal.Header>
                 <Modal.Body>
                     <CreateUser onUserCreated={(user) => { 
-                        localStorage.setItem('user', JSON.stringify(user));  // Store new user in localStorage
-                        setUser(user);  // Set user in context
-                        setShowCreate(false);  // Close modal on successful account creation
-                        navigate('/');  
+                        localStorage.setItem('user', JSON.stringify(user));
+                        setUser(user);
+                        setShowCreate(false);
+                        navigate('/');  // Navigate to homepage after successful account creation
                     }} />
                 </Modal.Body>
             </Modal>

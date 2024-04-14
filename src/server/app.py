@@ -109,30 +109,30 @@ class UserDetails(Resource):
 
 api.add_resource(UserDetails, '/user-details/<string:username>')
 
-# class ApologyDetails(Resource):
-#     def get(self, apology_id):
-#         apology = Apology.query.get_or_404(apology_id)
-#         user = User.query.get_or_404(apology.user_id)
-#         return jsonify({
-#             'username': user.username,
-#             'email': user.email,
-#             'apology_text': apology.apology_text
-#         })
+class ApologyDetails(Resource):
+    def get(self, apology_id):
+        apology = Apology.query.get_or_404(apology_id)
+        user = User.query.get_or_404(apology.user_id)
+        return jsonify({
+            'username': user.username,
+            'email': user.email,
+            'apology_text': apology.apology_text
+        })
 
-#     def patch(self, apology_id):
-#         apology = Apology.query.get_or_404(apology_id)
-#         user = User.query.get_or_404(apology.user_id)
-#         data = request.get_json()
-#         if 'username' in data:
-#             user.username = data['username']
-#         if 'email' in data:
-#             user.email = data['email']
-#         if 'apology_text' in data:
-#             apology.apology_text = data['apology_text']
-#         db.session.commit()
-#         return jsonify({'message': 'Updated successfully'})
+    def patch(self, apology_id):
+        apology = Apology.query.get_or_404(apology_id)
+        user = User.query.get_or_404(apology.user_id)
+        data = request.get_json()
+        if 'username' in data:
+            user.username = data['username']
+        if 'email' in data:
+            user.email = data['email']
+        if 'apology_text' in data:
+            apology.apology_text = data['apology_text']
+        db.session.commit()
+        return jsonify({'message': 'Updated successfully'})
 
-# api.add_resource(ApologyDetails, '/apology-details/<int:apology_id>')
+api.add_resource(ApologyDetails, '/apology-details/<int:apology_id>')
 
 class Categories(Resource):
     def get(self):
@@ -167,6 +167,38 @@ class MemorialData(Resource):
             return make_response(jsonify({"error": "Could not fetch memorial data", "message": str(e)}), 400)
 
 api.add_resource(MemorialData, '/memorial-data/')
+
+class MemorialFilter(Resource):
+    def get(self):
+        category_name = request.args.get('category')
+
+        try:
+            results = db.session.query(
+                User.username,
+                Apology.apology_text,
+                IntendedFor.recipient,
+                IntendedFor.event_location,
+                IntendedFor.event_date,
+                Category.category_name
+            ).join(Apology, User.id == Apology.user_id
+            ).join(IntendedFor, Apology.apology_id == IntendedFor.apology_id
+            ).join(ApologyCategory, ApologyCategory.apology_id == Apology.apology_id
+            ).join(Category, ApologyCategory.category_id == Category.category_id
+            ).filter(Category.category_name == category_name
+            ).all()
+
+            memorials = [
+                {"message": f"{result.username} says {result.apology_text} to {result.recipient} from {result.event_location} on {result.event_date.strftime('%Y-%m-%d')} in category {result.category_name}"}
+                for result in results
+            ]
+            return jsonify(memorials)  
+        except Exception as e:
+            
+            print(f"Error: {e}")
+            return jsonify({"error": "Could not fetch memorial data", "message": str(e)}), 500
+
+api.add_resource(MemorialFilter, '/memorial-filter/')
+
 
 class Login(Resource):
     def post(self):

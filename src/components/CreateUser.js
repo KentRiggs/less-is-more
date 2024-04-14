@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
+import './index.css'; 
 
 function CreateUser({ onUserCreated }) {
     const [username, setUsername] = useState("");
@@ -26,11 +27,10 @@ function CreateUser({ onUserCreated }) {
             if (typeof onUserCreated === "function") {
                 onUserCreated(user);
             }
-            // Clear the form fields after successful registration
             setUsername('');
             setEmail('');
             setPassword('');
-            setError(""); // Also clear any existing error messages
+            setError("");
         })
         .catch((error) => {
             console.error('Registration error:', error);
@@ -39,44 +39,46 @@ function CreateUser({ onUserCreated }) {
     };
 
     return (
-        <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="formBasicUsername">
-                <Form.Label>Username</Form.Label>
-                <Form.Control
-                    type="text"
-                    placeholder="Enter username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                />
-            </Form.Group>
+        <div className="create-user-modal">
+            <Form className="create-user-form" onSubmit={handleSubmit}>
+                <Form.Group controlId="formBasicUsername">
+                    <Form.Control
+                        className="create-user-input"
+                        type="text"
+                        placeholder="Enter username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        required
+                    />
+                </Form.Group>
+                <Form.Group controlId="formBasicEmail">
+                    <Form.Control
+                        className="create-user-input"
+                        type="email"
+                        placeholder="Enter email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
+                </Form.Group>
+                <Form.Group controlId="formBasicPassword">
+                    <Form.Control
+                        className="create-user-input"
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                </Form.Group>
 
-            <Form.Group controlId="formBasicEmail">
-                <Form.Label>Email</Form.Label>
-                <Form.Control
-                    type="email"
-                    placeholder="Enter email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                />
-            </Form.Group>
-            <Form.Group controlId="formBasicPassword">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-            </Form.Group>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+                {error && <div className="create-user-error">{error}</div>}
 
-            <Button variant="primary" type="submit">
-                Create Account
-            </Button>
-        </Form>
+                <Button className="create-user-button" variant="primary" type="submit">
+                    Create Account
+                </Button>
+            </Form>
+        </div>
     );
 }
 

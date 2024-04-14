@@ -47,34 +47,44 @@
 }
 .custom-navbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  flex-direction: column; /* Stack nav items vertically */
   padding: 10px 20px;
-  background-color: #f8f9fa; /* Bootstrap light background color*/
+  background-color: #f8f9fa;
+}
+
+.nav-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
 .nav-button {
-  color: #007bff; /* Bootstrap primary color for links */
+  color: #31312f;
   text-decoration: none; 
   padding: 5px 10px;
-  margin-right: 10px; /* Space between navigation links */
+  margin-right: 20px; /* Adjust as needed */
+}
+
+.nav-button:last-child {
+  margin-right: 0; /* Removes margin from the last button in a group */
 }
 
 .nav-button:hover {
-  color: #0056b3; /* Darker blue on hover */
-  text-decoration: none; /* Ensures no underline appears on hover */
+  color: #0056b3;
+  text-decoration: none;
 }
 
 .login-button {
-  margin-right: right; /* Pushes the login button to the right side of the navbar */
-  border: none; 
-  background-color: transparent; 
-  color: #28a745; /* success color */
+  background-color: transparent;
+  color: #28a745; /* Bootstrap success color */
   cursor: pointer;
 }
 
 .login-button:hover {
-  color: #218838; 
+  color: #218838;
 }
 
 /* Additional styling for the alert and modal */
@@ -116,6 +126,7 @@
 .login-alert {
   margin-bottom: 15px; /* Spacing above the alert message */
 }
+
 /* General styles for the Amend page */
 .amend-container {
   max-width: 600px; /* Set a max-width for the container */
@@ -238,17 +249,53 @@
   }
   100% {
     opacity: 0;
-    transform: translateY(-10px);  /* You can adjust this value to create a slight upward motion as it fades */
+    transform: translateY(-20px);  /* You can adjust this value to create a slight upward motion as it fades */
   }
 }
-
 .animated-letter {
   display: inline-block;
   opacity: 0;
   animation-name: fadeOut;
-  animation-duration: 5s; /* Control how long the fade takes */
+  animation-duration: 4s; /* Control how long the fade takes */
   animation-fill-mode: forwards; /* Keeps the letter at the final state of the animation */
   animation-timing-function: ease-in-out;
+}
+.create-user-modal {
+  position: fixed;
+  top: 50%;
+  left: 53%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  background: white;
+  z-index: 1050; /* Keep modal above other content */
+  border-radius: 8px; /* Optional: adds rounded corners */
+}
+
+.create-user-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.create-user-input {
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.create-user-button {
+  padding: 10px 15px;
+  width: 71%;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.create-user-error {
+  color: red;
+  text-align: center;
+  margin-top: 10px;
 }
 
 

@@ -1,12 +1,13 @@
 import React, { useState, useContext } from 'react';
-import { UserContext } from './UserContext'; 
+import { UserContext } from './UserContext';
 import './index.css';
 
-function Login({ onClose }) { // `onClose` function passed as a prop to handle modal closing
+function Login() {
     const { setUser } = useContext(UserContext);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");  
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState(""); 
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -24,23 +25,22 @@ function Login({ onClose }) { // `onClose` function passed as a prop to handle m
             return response.json();
         })
         .then((user) => {
-            setUser(user);  
-            setError("");  
+            setUser(user);
+            setSuccess("Login successful!"); 
             setUsername(""); // Clear the username field
             setPassword(""); // Clear the password field
-            if (onClose) {
-                onClose(); // Close the modal
-            }
         })
         .catch((error) => {
             console.error('Login error:', error);
             setError(error.message);
+            setSuccess(""); // Clear success message in case of error
         });
     };
 
     return (
         <div className="login-modal">
             {error && <div className="login-alert alert alert-danger">{error}</div>}
+            {success && <div className="login-alert alert alert-success">{success}</div>}
             <form className="login-form" onSubmit={handleSubmit}>
                 <input
                     className="login-input"
@@ -59,7 +59,7 @@ function Login({ onClose }) { // `onClose` function passed as a prop to handle m
                     required
                 />
                 <button className="login-button btn btn-primary" type="submit">
-                    Login
+                    Log in
                 </button>
             </form>
         </div>
