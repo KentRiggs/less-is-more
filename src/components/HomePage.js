@@ -66,10 +66,10 @@ const HomePage = () => {
       </div>
       <Row className="button-container">
         <Col>
-          <Button className="submit-button" onClick={handleExperienceRelease}>Submit Anonymously</Button>
+          <Button className="submit-button" onClick={handleExperienceRelease}>Apologize Anonymously</Button>
         </Col>
         <Col>
-          <Button className="details-button" onClick={() => navigate('/engage')}>Add Details</Button>
+          <Button className="details-button" onClick={() => navigate('/engage')}>Make it personal</Button>
         </Col>
       </Row>
     </Container>

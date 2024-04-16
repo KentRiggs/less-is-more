@@ -73,18 +73,18 @@
 }
 
 .nav-button:hover {
-  color: #0056b3;
+  color: #e3f119;
   text-decoration: none;
 }
 
 .login-button {
   background-color: transparent;
-  color: #28a745; /* Bootstrap success color */
+  color: #0e0e0d; /* Bootstrap success color */
   cursor: pointer;
 }
 
 .login-button:hover {
-  color: #218838;
+  color: #e3f119;
 }
 
 /* Additional styling for the alert and modal */
@@ -297,9 +297,3 @@
   text-align: center;
   margin-top: 10px;
 }
-
-
-
-
-
-

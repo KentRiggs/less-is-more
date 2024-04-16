@@ -5,7 +5,6 @@ from config import app, db, api
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
 from config import bcrypt 
-from sqlalchemy.sql import text
 
 class Users(Resource):
     def post(self):
@@ -89,6 +88,10 @@ class UsersWithApology(Resource):
 api.add_resource(UsersWithApology, '/users_with_apology/')
 
 class UserDetails(Resource):
+    def get(self, username):
+        user = User.query.filter_by(username=username).first_or_404(description='User not found')
+        return jsonify(user.to_dict())
+
     def patch(self, username):
         user = User.query.filter_by(username=username).first_or_404(description='User not found')
         data = request.get_json()
@@ -199,7 +202,6 @@ class MemorialFilter(Resource):
 
 api.add_resource(MemorialFilter, '/memorial-filter/')
 
-
 class Login(Resource):
     def post(self):
         data = request.get_json(force=True)
@@ -252,24 +254,6 @@ class Register(Resource):
             return make_response(jsonify({"error": "Database error", "message": str(e)}), 500)
 
 api.add_resource(Register, '/register')
-
-# class CheckSession(Resource):
-#     def get(self):
-#         user_id = session.get('user_id')
-#         if not user_id:
-#             return make_response(jsonify({'error': 'Not Authorized'}), 401)
-
-#         user = User.query.get(user_id)
-#         if not user:
-#             return make_response(jsonify({'error': 'User not found'}), 404)
-
-#         try:
-#             user_info = {"username": user.username}  # Assuming a simple dictionary return
-#             return make_response(jsonify(user_info), 200)
-#         except Exception as e:
-#             return make_response(jsonify({'error': 'Server error', 'message': str(e)}), 500)
-
-# api.add_resource(CheckSession, '/check_session')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
