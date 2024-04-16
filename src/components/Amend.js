@@ -10,7 +10,7 @@ const Amend = () => {
     username: '',
     email: '',
     apology_text: '',
-    password: ''  // Add password field to state
+    password: ''  
   });
   const [fetchError, setFetchError] = useState('');
 

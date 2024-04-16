@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Container, Form, Row, Col } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Button, Container, Form, Row, Col, Modal } from 'react-bootstrap';
+import CreateUser from './CreateUser';  // Make sure CreateUser is imported
 import './index.css';
 
 const HomePage = () => {
   const [apologyText, setApologyText] = useState('');
   const [submittedText, setSubmittedText] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const navigate = useNavigate();
+  const [showCreateUser, setShowCreateUser] = useState(false);  // Modal control for CreateUser
 
   const handleExperienceRelease = () => {
     fetch(`http://localhost:5555/apologies/`, {
@@ -34,17 +34,6 @@ const HomePage = () => {
     });
   };
 
-  useEffect(() => {
-    if (isSubmitted) {
-      // Extend or remove timeout as needed based on CSS animation
-      const timer = setTimeout(() => {
-        setIsSubmitted(false);
-        setSubmittedText('');
-      }, 10000);  // Match this duration to your longest animation delay
-      return () => clearTimeout(timer);
-    }
-  }, [isSubmitted]);
-
   return (
     <Container className="home-page-container">
       <h1 className="page-title">What needs to be let go?</h1>
@@ -69,9 +58,14 @@ const HomePage = () => {
           <Button className="submit-button" onClick={handleExperienceRelease}>Apologize Anonymously</Button>
         </Col>
         <Col>
-          <Button className="details-button" onClick={() => navigate('/engage')}>Make it personal</Button>
+          <Button className="details-button" onClick={() => setShowCreateUser(true)}>Make it personal</Button>
         </Col>
       </Row>
+      <Modal show={showCreateUser} onHide={() => setShowCreateUser(false)} centered>
+        <Modal.Body>
+          <CreateUser onUserCreated={() => setShowCreateUser(false)} />
+        </Modal.Body>
+      </Modal>
     </Container>
   );
 };

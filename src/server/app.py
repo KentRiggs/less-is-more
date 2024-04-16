@@ -49,37 +49,54 @@ api.add_resource(Apologies, '/apologies/')
 class UsersWithApology(Resource):
     def post(self):
         data = request.get_json(force=True)
-        required_fields = ['username', 'email', 'password', 'recipient', 'event_date', 'event_location', 'apology_id']
+        required_fields = ['username', 'email', 'password', 'recipient', 'event_date', 'event_location', 'category_id', 'apology_text']
         if not all(field in data for field in required_fields):
             return make_response(jsonify({"error": "Missing data for required fields"}), 400)
 
-        # Check if the username or email already exists
         user_exists = User.query.filter((User.username == data['username']) | (User.email == data['email'])).first()
         if user_exists:
             return make_response(jsonify({"error": "Username or email already exists"}), 409)
 
         try:
-            # Convert the date from string to date object
             data['event_date'] = datetime.strptime(data['event_date'], '%Y-%m-%d').date()
-            new_user = User(username=data['username'], email=data['email'], password=data['password'])
+
+            new_user = User(
+                username=data['username'],
+                email=data['email'],
+                password=data['password']  
+            )
             db.session.add(new_user)
-            db.session.flush()  # Get the new user ID without committing the transaction
+            db.session.flush()
 
-            # Check if the apology ID exists
-            if not Apology.query.get(data['apology_id']):
-                db.session.rollback()
-                return make_response(jsonify({"error": "Apology ID does not exist"}), 404)
+            new_apology = Apology(
+                user_id=new_user.id,
+                apology_text=data['apology_text'],
+                apology_created_at=datetime.utcnow()
+            )
+            db.session.add(new_apology)
+            db.session.flush()
 
-            # Create the IntendedFor record
             new_intended_for = IntendedFor(
                 recipient=data['recipient'],
                 event_location=data['event_location'],
                 event_date=data['event_date'],
-                apology_id=data['apology_id'],
+                apology_id=new_apology.apology_id,
             )
             db.session.add(new_intended_for)
+
+            new_apology_category = ApologyCategory(
+                apology_id=new_apology.apology_id,
+                category_id=data['category_id']
+            )
+            db.session.add(new_apology_category)
+
             db.session.commit()
-            return make_response(jsonify({"message": "User and apology associated successfully", "user_id": new_user.id}), 201)
+
+            # Fetch full user object to send back
+            user_details = new_user.to_dict()
+            user_details['apology_id'] = new_apology.apology_id 
+
+            return make_response(jsonify({"message": "User and apology associated successfully", "user": user_details}), 201)
 
         except SQLAlchemyError as e:
             db.session.rollback()
@@ -112,30 +129,30 @@ class UserDetails(Resource):
 
 api.add_resource(UserDetails, '/user-details/<string:username>')
 
-class ApologyDetails(Resource):
-    def get(self, apology_id):
-        apology = Apology.query.get_or_404(apology_id)
-        user = User.query.get_or_404(apology.user_id)
-        return jsonify({
-            'username': user.username,
-            'email': user.email,
-            'apology_text': apology.apology_text
-        })
+# class ApologyDetails(Resource):
+#     def get(self, apology_id):
+#         apology = Apology.query.get_or_404(apology_id)
+#         user = User.query.get_or_404(apology.user_id)
+#         return jsonify({
+#             'username': user.username,
+#             'email': user.email,
+#             'apology_text': apology.apology_text
+#         })
 
-    def patch(self, apology_id):
-        apology = Apology.query.get_or_404(apology_id)
-        user = User.query.get_or_404(apology.user_id)
-        data = request.get_json()
-        if 'username' in data:
-            user.username = data['username']
-        if 'email' in data:
-            user.email = data['email']
-        if 'apology_text' in data:
-            apology.apology_text = data['apology_text']
-        db.session.commit()
-        return jsonify({'message': 'Updated successfully'})
+#     def patch(self, apology_id):
+#         apology = Apology.query.get_or_404(apology_id)
+#         user = User.query.get_or_404(apology.user_id)
+#         data = request.get_json()
+#         if 'username' in data:
+#             user.username = data['username']
+#         if 'email' in data:
+#             user.email = data['email']
+#         if 'apology_text' in data:
+#             apology.apology_text = data['apology_text']
+#         db.session.commit()
+#         return jsonify({'message': 'Updated successfully'})
 
-api.add_resource(ApologyDetails, '/apology-details/<int:apology_id>')
+# api.add_resource(ApologyDetails, '/apology-details/<int:apology_id>')
 
 class Categories(Resource):
     def get(self):
@@ -149,34 +166,10 @@ api.add_resource(Categories, '/categories/')
 
 class MemorialData(Resource):
     def get(self):
-        try:
-            results = db.session.query(
-                User.username,
-                Apology.apology_text,
-                IntendedFor.recipient,
-                IntendedFor.event_location,
-                IntendedFor.event_date
-            ).outerjoin(User, User.id == Apology.user_id
-            ).join(IntendedFor, IntendedFor.apology_id == Apology.apology_id
-            ).all()
-
-            memorials = [
-                {
-                    "message": f"{result.username if result.username else 'Anonymous'} says {result.apology_text} to {result.recipient} from {result.event_location} on {result.event_date.strftime('%Y-%m-%d')}"
-                } for result in results
-            ]
-            return jsonify(memorials)
-        except SQLAlchemyError as e:
-            return make_response(jsonify({"error": "Could not fetch memorial data", "message": str(e)}), 400)
-
-api.add_resource(MemorialData, '/memorial-data/')
-
-class MemorialFilter(Resource):
-    def get(self):
-        category_name = request.args.get('category')
+        category_name = request.args.get('category', None)  # Get category if provided, else None
 
         try:
-            results = db.session.query(
+            query = db.session.query(
                 User.username,
                 Apology.apology_text,
                 IntendedFor.recipient,
@@ -185,22 +178,23 @@ class MemorialFilter(Resource):
                 Category.category_name
             ).join(Apology, User.id == Apology.user_id
             ).join(IntendedFor, Apology.apology_id == IntendedFor.apology_id
-            ).join(ApologyCategory, ApologyCategory.apology_id == Apology.apology_id
-            ).join(Category, ApologyCategory.category_id == Category.category_id
-            ).filter(Category.category_name == category_name
-            ).all()
+            ).outerjoin(ApologyCategory, ApologyCategory.apology_id == Apology.apology_id
+            ).outerjoin(Category, ApologyCategory.category_id == Category.category_id)
+
+            if category_name:
+                query = query.filter(Category.category_name == category_name)
+            
+            results = query.all()
 
             memorials = [
-                {"message": f"{result.username} says {result.apology_text} to {result.recipient} from {result.event_location} on {result.event_date.strftime('%Y-%m-%d')} in category {result.category_name}"}
+                {"message": f"{result.username} says {result.apology_text} to {result.recipient} from {result.event_location} on {result.event_date.strftime('%Y-%m-%d')}" + (f" in category {result.category_name}" if result.category_name else "")}
                 for result in results
             ]
-            return jsonify(memorials)  
-        except Exception as e:
-            
-            print(f"Error: {e}")
-            return jsonify({"error": "Could not fetch memorial data", "message": str(e)}), 500
+            return jsonify(memorials)
+        except SQLAlchemyError as e:
+            return make_response(jsonify({"error": "Could not fetch memorial data", "message": str(e)}), 400)
 
-api.add_resource(MemorialFilter, '/memorial-filter/')
+api.add_resource(MemorialData, '/memorials/')
 
 class Login(Resource):
     def post(self):

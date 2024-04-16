@@ -6,21 +6,17 @@ const MemorialPage = () => {
   const [category, setCategory] = useState(''); // Default to '' which means no filter
 
   useEffect(() => {
-    const fetchMemorials = () => {
-      // Default endpoint for all memorials
-      let endpoint = 'http://localhost:5555/memorial-data/';
-      // If a category is selected (and is not the empty 'no filter' option), fetch filtered memorials
-      if (category) {
-        endpoint = `http://localhost:5555/memorial-filter/${category}`;
-      }
+    const endpoint = category ? `http://localhost:5555/memorials/?category=${category}` : 'http://localhost:5555/memorials/';
 
-      fetch(endpoint)
-        .then(response => response.json())
-        .then(data => setMemorials(data))
-        .catch(error => console.error('Error fetching memorial data:', error));
-    };
-
-    fetchMemorials();
+    fetch(endpoint)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Failed to fetch data, status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => setMemorials(data))
+      .catch(error => console.error('Error fetching memorial data:', error));
   }, [category]); // Re-fetch when category changes
 
   return (
@@ -30,10 +26,10 @@ const MemorialPage = () => {
         <label htmlFor="category-select">Filter by Category:</label>
         <select id="category-select" onChange={(e) => setCategory(e.target.value)}>
           <option value="">No Filter</option>
-          <option value="1">Family</option>
-          <option value="2">Friends</option>
-          <option value="3">Coworkers</option>
-          <option value="4">Public</option>
+          <option value="Family">Family</option>
+          <option value="Friends">Friends</option>
+          <option value="Coworkers">Coworkers</option>
+          <option value="Public">Public</option>
         </select>
       </div>
       {memorials.map((memorial, index) => (
