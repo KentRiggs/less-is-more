@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { UserContext } from './UserContext';
-import './index.css';
+
 
 function CreateUser({ onUserCreated }) {
     const { setUser } = useContext(UserContext);  

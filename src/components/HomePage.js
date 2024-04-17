@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Button, Container, Form, Row, Col, Modal } from 'react-bootstrap';
-import CreateUser from './CreateUser';  // Make sure CreateUser is imported
+import CreateUser from './CreateUser';  
+import { UserContext } from './UserContext';  // Import the context
 import './index.css';
 
 const HomePage = () => {
+  const { user } = useContext(UserContext);  // Use the context to get the current user
   const [apologyText, setApologyText] = useState('');
   const [submittedText, setSubmittedText] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [showCreateUser, setShowCreateUser] = useState(false);  // Modal control for CreateUser
+  const [showCreateUser, setShowCreateUser] = useState(false);  
 
   const handleExperienceRelease = () => {
     fetch(`http://localhost:5555/apologies/`, {
@@ -58,7 +60,9 @@ const HomePage = () => {
           <Button className="submit-button" onClick={handleExperienceRelease}>Apologize Anonymously</Button>
         </Col>
         <Col>
-          <Button className="details-button" onClick={() => setShowCreateUser(true)}>Make it personal</Button>
+          {!user && (  // Only show the button if there is no user logged in
+            <Button className="details-button" onClick={() => setShowCreateUser(true)}>Make it personal</Button>
+          )}
         </Col>
       </Row>
       <Modal show={showCreateUser} onHide={() => setShowCreateUser(false)} centered>

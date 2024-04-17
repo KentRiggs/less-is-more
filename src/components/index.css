@@ -118,7 +118,7 @@
 
 .login-button {
   padding: 10px 15px;
-  width: 100%;
+  width: 25%;
   font-size: 16px;
   font-weight: bold;
 }
@@ -174,7 +174,7 @@
 .amend-button:hover {
   background-color: #0056b3; /* Darker on hover */
 }
-/* General styles for the Engage page */
+General styles for the Engage page
 .engage-container {
   max-width: 600px; /* Set a max-width for the container */
   margin: 0 auto; /* Center the container horizontally */
@@ -296,4 +296,39 @@
   color: red;
   text-align: center;
   margin-top: 10px;
+}
+.create-user-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  background: white;
+  z-index: 1050; /* Make sure it's above other content */
+}
+
+.create-user-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.create-user-input {
+  margin-bottom: 10px; /* Space between inputs */
+  padding: 10px;
+  font-size: 16px; 
+}
+
+.create-user-button {
+  padding: 10px 15px;
+  width: 100%;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.create-user-error {
+  margin-bottom: 15px; /* Spacing above the alert message */
+  color: red; /* Assuming you want errors shown in red */
+  text-align: center; /* Center align the error message */
 }

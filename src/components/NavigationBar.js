@@ -24,11 +24,11 @@ const NavigationBar = () => {
             }
             localStorage.removeItem('user');  // Clear user from localStorage
             setUser(null);  // Clear user context
-            navigate('/');  // Navigate to homepage after logout
+            navigate('/');  
         })
         .catch(error => {
             console.error('Logout error:', error);
-            setError('Logout failed. Please try again.');  // Set error if logout fails
+            setError('Logout failed. Please try again.');  
         });
     };
 
@@ -48,7 +48,6 @@ const NavigationBar = () => {
                 ) : (
                     <>
                         <Button onClick={handleLoginModal} variant="outline-success" className="login-button">Login</Button>
-                        <Button onClick={handleCreateModal} variant="outline-primary" className="login-button">Register</Button>
                     </>
                 )}
             </Nav>
@@ -69,7 +68,7 @@ const NavigationBar = () => {
                         localStorage.setItem('user', JSON.stringify(user));
                         setUser(user);
                         setShowCreate(false);
-                        navigate('/');  // Navigate to homepage after successful account creation
+                        navigate('/');  
                     }} />
                 </Modal.Body>
             </Modal>

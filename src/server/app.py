@@ -115,15 +115,30 @@ class UserDetails(Resource):
 
         if 'password' in data and bcrypt.check_password_hash(user.password, data['password']):
             user_fields = ['username', 'email']
+            apology_fields = ['apology_text']
+
+            # Update user details
             for field in user_fields:
                 if field in data:
                     setattr(user, field, data[field])
+
+            # Update apology text if it exists in the data
+            if 'apology_text' in data:
+                # Find the latest apology associated with the user (you might want to adjust this logic)
+                apology = Apology.query.filter_by(user_id=user.id).order_by(Apology.apology_created_at.desc()).first()
+                if apology:
+                    apology.apology_text = data['apology_text']
+                else:
+                    # Optionally create a new apology if none exist (or handle this case differently)
+                    new_apology = Apology(user_id=user.id, apology_text=data['apology_text'])
+                    db.session.add(new_apology)
+
             try:
                 db.session.commit()
                 return make_response(jsonify(user.to_dict()), 200)
             except SQLAlchemyError as e:
                 db.session.rollback()
-                return make_response(jsonify({"error": "Could not update user", "message": str(e)}), 400)
+                return make_response(jsonify({"error": "Could not update user and apology", "message": str(e)}), 400)
         else:
             return make_response(jsonify({"error": "Invalid credentials"}), 401)
 

@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { Formik, Field, Form } from 'formik';
 import { UserContext } from './UserContext';
 import * as Yup from 'yup';
@@ -14,14 +14,7 @@ const Amend = () => {
   });
   const [fetchError, setFetchError] = useState('');
 
-  useEffect(() => {
-    if (user) {
-      // Fetch the current user details once when the component mounts
-      fetchUserDetails();
-    }
-  }, [user]);
-
-  const fetchUserDetails = () => {
+  const fetchUserDetails = useCallback(() => {
     if (!user || !user.username) {
         console.error('No user logged in or username missing');
         setFetchError('No user information available. Please log in.');
@@ -47,7 +40,13 @@ const Amend = () => {
         console.error('Fetch Error:', error);
         setFetchError('Failed to fetch details. Please try again.');
     });
-  };
+  }, [user]); // Add any other dependencies if necessary
+
+  useEffect(() => {
+    if (user) {
+      fetchUserDetails();
+    }
+  }, [user, fetchUserDetails]); // Now fetchUserDetails is stable and included in dependencies
 
   const validationSchema = Yup.object().shape({
     username: Yup.string().required('Username is required'),
@@ -105,9 +104,9 @@ const Amend = () => {
       >
         {({ isSubmitting }) => (
           <Form>
-            <Field name="username" type="text" className="amend-input" />
-            <Field name="email" type="email" className="amend-input" />
-            <Field name="apology_text" component="textarea" className="amend-textarea" />
+            <Field name="username" type="text" placeholder="Enter your username" className="amend-input" />
+            <Field name="email" type="email" placeholder="Enter your email" className="amend-input" />
+            <Field name="apology_text" component="textarea" placeholder="Write your apology here" className="amend-textarea" />
             <Field name="password" type="password" placeholder="Enter your password to confirm changes" className="amend-input" />
             <button type="submit" className="amend-button" disabled={isSubmitting}>
               Save Changes

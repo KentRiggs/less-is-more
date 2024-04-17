@@ -33,7 +33,7 @@ function Login() {
         .catch((error) => {
             console.error('Login error:', error);
             setError(error.message);
-            setSuccess(""); // Clear success message in case of error
+            setSuccess(""); 
         });
     };
 
