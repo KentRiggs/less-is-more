@@ -1,10 +1,14 @@
+/* Set Courier New as the default font for all text in the application */
+html, body {
+  font-family: 'Courier New', Courier, monospace;
+}
+
 .home-page-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start; /* Aligns content to the top */
   min-height: 100vh;
-  font-family: 'Courier New', Courier, monospace; 
 }
 
 .page-title {
@@ -30,6 +34,8 @@
 
 .text-container {
   margin: 10px 0; 
+  position: relative;
+  z-index: 2; 
 }
 
 .button-container {
@@ -43,8 +49,8 @@
   width: 100%; /* Each button fills the container */
   margin-bottom: 15px; 
   font-size: 18px; 
-  
 }
+
 .custom-navbar {
   display: flex;
   justify-content: center;
@@ -93,7 +99,8 @@
   width: 100%;
   text-align: center;
 }
-.login-modal {
+
+.login-modal, .create-user-modal {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -103,32 +110,36 @@
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   background: white;
   z-index: 1050; /* Make sure it's above other content */
+  border-radius: 8px; /* Optional: adds rounded corners */
 }
 
-.login-form {
+.login-form, .create-user-form {
   display: flex;
   flex-direction: column;
 }
 
-.login-input {
+.login-input, .create-user-input {
   margin-bottom: 10px; /* Space between inputs */
   padding: 10px;
   font-size: 16px; 
 }
 
-.login-button {
+.login-button, .create-user-button {
   padding: 10px 15px;
-  width: 25%;
+  width: 100%;
   font-size: 16px;
   font-weight: bold;
+  cursor: pointer;
 }
 
-.login-alert {
-  margin-bottom: 15px; /* Spacing above the alert message */
+.login-alert, .create-user-error {
+  color: red;
+  text-align: center;
+  margin-top: 10px;
 }
 
-/* General styles for the Amend page */
-.amend-container {
+/* General styles for the Amend, Engage, and Memorial pages */
+.amend-container, .engage-container, .memorial-container {
   max-width: 600px; /* Set a max-width for the container */
   margin: 0 auto; /* Center the container horizontally */
   padding: 20px;
@@ -137,69 +148,21 @@
   align-items: center; /* Align items to the center */
 }
 
-.amend-title {
-  font-size: 24px; /* Larger font size for the title */
+.amend-title, .engage-title, .memorial-title {
+  font-size: 24px; 
   font-weight: bold;
-  margin-bottom: 20px; /* Space below the title */
+  margin-bottom: 20px; 
 }
 
-.amend-input {
-  width: 100%; /* Full width of its parent */
-  padding: 10px;
-  margin-bottom: 15px; /* Space between form inputs */
-  border: 1px solid #ccc; /* Subtle border for inputs */
-  border-radius: 4px; /* Rounded corners for the input fields */
-}
-
-.amend-textarea {
-  width: 100%; /* Full width of its parent */
-  height: 150px; /* Taller text area for longer content */
+.amend-input, .engage-input, .engage-select, .amend-textarea, .memorial-text {
+  width: 100%; 
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
   margin-bottom: 15px;
 }
 
-.amend-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  color: white;
-  background-color: #007bff; /* Bootstrap primary button color */
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-bottom: 20px; /* Space below the button */
-}
-
-.amend-button:hover {
-  background-color: #0056b3; /* Darker on hover */
-}
-General styles for the Engage page
-.engage-container {
-  max-width: 600px; /* Set a max-width for the container */
-  margin: 0 auto; /* Center the container horizontally */
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* This should center all child elements */
-}
-
-.engage-title {
-  font-size: 24px; 
-  font-weight: bold;
-  text-align: center; /* Ensures the title is centered if it's not inheriting center alignment */
-  margin-bottom: 20px; /* Space below the title */
-}
-
-.engage-input, .engage-select {
-  width: 75%; 
-  padding: 10px;
-  margin: 0 auto 15px auto; 
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.engage-button {
+.amend-button, .engage-button {
   padding: 10px 20px;
   font-size: 16px;
   color: white;
@@ -207,128 +170,57 @@ General styles for the Engage page
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  display: block; /* Make the button a block element to apply margin */
-  margin: 20px auto 0 auto; /* Centers the button horizontally and adds space above */
+  margin-bottom: 20px; /* Space below the button */
 }
 
-.engage-button:hover {
-  background-color: #0056b3;
+.amend-button:hover, .engage-button:hover {
+  background-color: #0056b3; /* Darker on hover */
 }
-/* General styles for the Memorial page */
-.memorial-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; /* Aligns content to the top */
-  min-height: 100vh; /* Ensures the container takes at least the full height of the viewport */
-  padding: 20px; /* Padding around the content */
-  padding-top: 40px; /* Additional top padding to raise content */
-}
-
-.memorial-title {
-  text-align: center;
-  font-size: 40px; 
-  font-weight: bold;
-  margin-bottom: 20px; 
-}
-
-.memorial-text {
-  text-align: left; 
-  margin: 5px auto; 
-  font-size: 16px; 
-  text-transform: lowercase; 
-  padding: .1px 0; 
-  width: 80%; 
-  max-width: 800px; 
-  box-sizing: border-box; 
-}
-@keyframes fadeOut {
+@keyframes particleAnimation {
   0% {
     opacity: 1;
-    transform: translateY(0px);
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    background-color: #FF4500;
   }
   100% {
     opacity: 0;
-    transform: translateY(-20px);  /* You can adjust this value to create a slight upward motion as it fades */
+    transform: translateY(-200px) scale(0) rotate(360deg);
   }
 }
+.particle {
+  position: absolute;
+  width: 5px; /* Larger for more visible particles */
+  height: 5px;
+  background-color: #FFA500; /* Initial color to resemble embers */
+  border-radius: 50%;
+  animation: particleAnimation 2s forwards ease-out;
+  box-shadow: 0 0 6px 2px rgba(255, 69, 0, 0.9); /* Soft glow */
+  z-index: 1;
+}
+
+.text-container {
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes fadeOutText {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+    color: #000;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8) translateY(-50px); /* Reduced movement to match particle ascent */
+    color: #FFA500;
+  }
+}
+
 .animated-letter {
   display: inline-block;
   opacity: 0;
-  animation-name: fadeOut;
-  animation-duration: 4s; /* Control how long the fade takes */
-  animation-fill-mode: forwards; /* Keeps the letter at the final state of the animation */
-  animation-timing-function: ease-in-out;
-}
-.create-user-modal {
-  position: fixed;
-  top: 50%;
-  left: 53%;
-  transform: translate(-50%, -50%);
-  width: 300px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  background: white;
-  z-index: 1050; /* Keep modal above other content */
-  border-radius: 8px; /* Optional: adds rounded corners */
-}
-
-.create-user-form {
-  display: flex;
-  flex-direction: column;
-}
-
-.create-user-input {
-  margin-bottom: 10px;
-  padding: 10px;
-  font-size: 16px;
-}
-
-.create-user-button {
-  padding: 10px 15px;
-  width: 71%;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.create-user-error {
-  color: red;
-  text-align: center;
-  margin-top: 10px;
-}
-.create-user-modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 300px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  background: white;
-  z-index: 1050; /* Make sure it's above other content */
-}
-
-.create-user-form {
-  display: flex;
-  flex-direction: column;
-}
-
-.create-user-input {
-  margin-bottom: 10px; /* Space between inputs */
-  padding: 10px;
-  font-size: 16px; 
-}
-
-.create-user-button {
-  padding: 10px 15px;
-  width: 100%;
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.create-user-error {
-  margin-bottom: 15px; /* Spacing above the alert message */
-  color: red; /* Assuming you want errors shown in red */
-  text-align: center; /* Center align the error message */
+  animation: fadeOutText 4s forwards ease-in-out;
 }

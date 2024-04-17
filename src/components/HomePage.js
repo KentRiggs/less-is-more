@@ -1,15 +1,16 @@
 import React, { useState, useContext } from 'react';
 import { Button, Container, Form, Row, Col, Modal } from 'react-bootstrap';
 import CreateUser from './CreateUser';  
-import { UserContext } from './UserContext';  // Import the context
+import { UserContext } from './UserContext';  
 import './index.css';
 
 const HomePage = () => {
-  const { user } = useContext(UserContext);  // Use the context to get the current user
+  const { user } = useContext(UserContext);
   const [apologyText, setApologyText] = useState('');
   const [submittedText, setSubmittedText] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [showCreateUser, setShowCreateUser] = useState(false);  
+  const [particles, setParticles] = useState([]);
+  const [showCreateUser, setShowCreateUser] = useState(false);
 
   const handleExperienceRelease = () => {
     fetch(`http://localhost:5555/apologies/`, {
@@ -26,6 +27,11 @@ const HomePage = () => {
         setIsSubmitted(true);
         setSubmittedText(apologyText);
         setApologyText('');
+        setParticles(createParticles()); // Create particles when text is submitted
+        setTimeout(() => {
+          setIsSubmitted(false);
+          setParticles([]);
+        }, 4000); // Reset after animation
       } else {
         throw new Error('Failed to submit apology');
       }
@@ -35,6 +41,17 @@ const HomePage = () => {
       alert('Failed to submit your apology. Please try again.');
     });
   };
+
+  const createParticles = () => {
+    return Array.from({ length: 20 }, (_, index) => ({
+      id: index,
+      style: {
+        left: `${50 + Math.random() * 50 - 25}%`, 
+        top: `${Math.random() * 20 - 10}px`, 
+      }
+    }));
+  };
+  
 
   return (
     <Container className="home-page-container">
@@ -54,13 +71,16 @@ const HomePage = () => {
             {letter}
           </span>
         ))}
+        {particles.map(particle => (
+          <div key={particle.id} className="particle" style={particle.style}></div>
+        ))}
       </div>
       <Row className="button-container">
         <Col>
           <Button className="submit-button" onClick={handleExperienceRelease}>Apologize Anonymously</Button>
         </Col>
         <Col>
-          {!user && (  // Only show the button if there is no user logged in
+          {!user && (
             <Button className="details-button" onClick={() => setShowCreateUser(true)}>Make it personal</Button>
           )}
         </Col>

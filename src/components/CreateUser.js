@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
 import { UserContext } from './UserContext';
 
-
 function CreateUser({ onUserCreated }) {
-    const { setUser } = useContext(UserContext);  
+    const { setUser } = useContext(UserContext);
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -18,21 +17,21 @@ function CreateUser({ onUserCreated }) {
 
     useEffect(() => {
         fetch('http://localhost:5555/categories/')
-        .then(response => response.json())
-        .then(data => setCategories(data))
-        .catch(error => console.error('Error fetching categories:', error));
+            .then(response => response.json())
+            .then(data => setCategories(data))
+            .catch(error => console.error('Error fetching categories:', error));
     }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const userData = {
-            username, 
-            email, 
-            password, 
-            apology_text: apologyText, 
-            recipient, 
-            event_date: eventDate, 
-            event_location: eventLocation, 
+            username,
+            email,
+            password,
+            apology_text: apologyText,
+            recipient,
+            event_date: eventDate,
+            event_location: eventLocation,
             category_id: category
         };
 
@@ -43,32 +42,32 @@ function CreateUser({ onUserCreated }) {
             },
             body: JSON.stringify(userData),
         })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error('Failed to create user and submit apology. Please try different credentials.');
-            }
-            return response.json();
-        })
-        .then((user) => {
-            setUser(user);  
-            if (typeof onUserCreated === "function") {
-                onUserCreated(user);
-            }
-            // Clear all fields after successful registration and apology submission
-            setUsername('');
-            setEmail('');
-            setPassword('');
-            setApologyText('');
-            setRecipient('');
-            setEventDate('');
-            setEventLocation('');
-            setCategory('');
-            setError("");  
-        })
-        .catch((error) => {
-            console.error('Registration error:', error);
-            setError(error.message);
-        });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to create user and submit apology. Please try different credentials.');
+                }
+                return response.json();
+            })
+            .then(user => {
+                setUser(user);
+                if (typeof onUserCreated === "function") {
+                    onUserCreated();
+                }
+                // Clear all fields after successful registration and apology submission
+                setUsername('');
+                setEmail('');
+                setPassword('');
+                setApologyText('');
+                setRecipient('');
+                setEventDate('');
+                setEventLocation('');
+                setCategory('');
+                setError("");
+            })
+            .catch(error => {
+                console.error('Registration error:', error);
+                setError(error.message);
+            });
     };
 
     return (
@@ -104,7 +103,7 @@ function CreateUser({ onUserCreated }) {
                     </Form.Control>
                 </Form.Group>
                 {error && <div className="create-user-error">{error}</div>}
-                <Button className="create-user-button" variant="primary" type="submit">Create Account and Submit Apology</Button>
+                <Button className="create-user-button" type="submit">Create Account and Submit Apology</Button>
             </Form>
         </div>
     );
